@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project 5 — Mike Tjahyono</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<style>
+#proj-hero{padding:calc(var(--nav) + 4rem) 2rem 4rem;border-bottom:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:end}
+.proj-back{position:fixed;top:calc(var(--nav) + 1rem);left:2rem;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-mid);z-index:200;display:flex;align-items:center;gap:.4rem;transition:color .2s}
+.proj-back:hover{color:var(--red)}
+.proj-tag{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-dim);margin-bottom:1rem;opacity:0;animation:up .6s ease forwards .2s}
+.proj-h1{font-family:var(--serif);font-style:italic;font-size:clamp(2rem,5vw,4.5rem);line-height:1;letter-spacing:-.025em;opacity:0;animation:up .7s ease forwards .4s}
+.proj-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;opacity:0;animation:up .7s ease forwards .5s}
+.proj-meta-item{display:flex;flex-direction:column;gap:.3rem;padding-top:1rem;border-top:1px solid var(--border)}
+.proj-meta-l{font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-dim)}
+.proj-meta-v{font-size:.85rem;color:var(--fg)}
+#proj-cover{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#e8e4dc,#d5d1c9);display:flex;align-items:center;justify-content:center;font-size:8rem;overflow:hidden}
+#proj-body{padding:5rem 2rem;max-width:760px;margin:0 auto}
+.proj-section-title{font-family:var(--serif);font-size:1.6rem;letter-spacing:-.01em;margin-bottom:1.2rem;margin-top:3.5rem;padding-top:2rem;border-top:1px solid var(--border)}
+.proj-section-title:first-child{margin-top:0;padding-top:0;border-top:none}
+.proj-p{font-size:.92rem;color:var(--fg-mid);line-height:1.85;margin-bottom:1rem}
+.proj-p strong{color:var(--fg)}
+.proj-images{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);margin:3rem 0}
+.proj-img-slot{aspect-ratio:4/3;background:#e0ddd6;display:flex;align-items:center;justify-content:center;font-size:3rem;color:var(--fg-dim)}
+.proj-tags-full{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:1.5rem}
+.ptag{font-size:.65rem;letter-spacing:.06em;padding:.25rem .6rem;border:1px solid var(--border);color:var(--fg-mid)}
+#proj-nav{display:flex;justify-content:space-between;padding:3rem 2rem;border-top:1px solid var(--border)}
+.proj-nav-link{display:flex;flex-direction:column;gap:.3rem;cursor:none}
+.proj-nav-dir{font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--fg-dim)}
+.proj-nav-title{font-family:var(--serif);font-size:1.2rem;letter-spacing:-.01em;transition:color .2s}
+.proj-nav-link:hover .proj-nav-title{color:var(--red)}
+@keyframes up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+@media(max-width:768px){#proj-hero{grid-template-columns:1fr;gap:2rem}.proj-images{grid-template-columns:1fr}#proj-nav{flex-direction:column;gap:2rem}}
+</style>
+</head>
+<body>
+<div id="cur"></div>
+<div id="cur-r"></div>
+<div id="page-veil"></div>
+<nav>
+  <a href="../index.html" class="nav-logo" data-nav>MT*</a>
+  <span class="nav-center">Work</span>
+  <ul class="nav-links">
+    <li><a href="../work.html" class="active" data-nav>work</a></li>
+    <li><a href="../lab.html" data-nav>lab</a></li>
+    <li><a href="../about.html" data-nav>about</a></li>
+  </ul>
+</nav>
+<a href="../work.html" class="proj-back hover-link" data-nav>← back to work</a>
+<section id="proj-hero">
+  <div>
+    <p class="proj-tag">Project 05</p>
+    <h1 class="proj-h1">Your Project<br><em>Title Here</em></h1>
+  </div>
+  <div class="proj-meta-grid">
+    <div class="proj-meta-item"><span class="proj-meta-l">Client</span><span class="proj-meta-v">Client Name</span></div>
+    <div class="proj-meta-item"><span class="proj-meta-l">Year</span><span class="proj-meta-v">2024</span></div>
+    <div class="proj-meta-item"><span class="proj-meta-l">Role</span><span class="proj-meta-v">Your Role</span></div>
+    <div class="proj-meta-item"><span class="proj-meta-l">Tools</span><span class="proj-meta-v">Your Tools</span></div>
+  </div>
+</section>
+<div id="proj-cover">✦</div>
+<div id="proj-body">
+  <h2 class="proj-section-title sr">Overview</h2>
+  <p class="proj-p sr">Replace this with your project description. What was the brief? What problem were you solving? What made this project interesting?</p>
+  <div class="proj-tags-full sr"><span class="ptag">Tag 1</span><span class="ptag">Tag 2</span><span class="ptag">Tag 3</span></div>
+  <div class="proj-images sr">
+    <div class="proj-img-slot">🖼</div>
+    <div class="proj-img-slot">🖼</div>
+    <div class="proj-img-slot">🖼</div>
+    <div class="proj-img-slot">🖼</div>
+  </div>
+  <h2 class="proj-section-title sr">The Process</h2>
+  <p class="proj-p sr">Describe your process here. What steps did you take? What decisions did you make and why?</p>
+  <h2 class="proj-section-title sr">Result</h2>
+  <p class="proj-p sr">What was the outcome? What did you learn? What impact did the project have?</p>
+</div>
+<div id="proj-nav">
+  <a href="project4.html" class="proj-nav-link hover-link" data-nav>
+    <span class="proj-nav-dir">← Previous</span>
+    <span class="proj-nav-title">Previous Project</span>
+  </a>
+  <a href="project1.html" class="proj-nav-link hover-link" style="text-align:right" data-nav>
+    <span class="proj-nav-dir">Next →</span>
+    <span class="proj-nav-title">Next Project</span>
+  </a>
+</div>
+<footer><p>© 2026 Mike Tjahyono — AI Designer</p><p>MT* /26</p></footer>
+<script src="../main.js"></script>
+</body>
+</html>
