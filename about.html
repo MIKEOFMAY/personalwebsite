@@ -1,259 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>About — Mike Tjahyono</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-<style>
-#about-hero{
-  padding:calc(var(--nav) + 4rem) 2rem 3rem;
-  border-bottom:1px solid var(--border);
-  display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:end;
-}
-.about-hero-h1{
-  font-family:var(--serif);font-style:italic;
-  font-size:clamp(2.5rem,6vw,5.5rem);
-  line-height:.95;letter-spacing:-.03em;
-  opacity:0;animation:up .7s ease forwards .3s;
-}
-.about-hero-sub{
-  font-size:.92rem;color:var(--fg-mid);line-height:1.8;
-  opacity:0;animation:up .7s ease forwards .5s;
-}
-#bio{padding:5rem 2rem;display:grid;grid-template-columns:1fr 1fr;gap:5rem}
-.bio-text p{font-size:.92rem;color:var(--fg-mid);line-height:1.85;margin-bottom:1.2rem}
-.bio-text p strong{color:var(--fg)}
-.bio-stats{display:flex;flex-direction:column;gap:0}
-.stat-row{
-  display:flex;justify-content:space-between;align-items:baseline;
-  padding:1.2rem 0;border-bottom:1px solid var(--border);
-}
-.stat-num{
-  font-family:var(--serif);font-size:2.5rem;
-  letter-spacing:-.02em;color:var(--fg);
-}
-.stat-label{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-dim)}
-#experience{padding:5rem 2rem;border-top:1px solid var(--border)}
-.exp-list{display:flex;flex-direction:column}
-.exp-row{
-  display:grid;grid-template-columns:120px 1fr auto;
-  align-items:start;gap:2rem;
-  padding:1.5rem 0;border-bottom:1px solid var(--border);
-}
-.exp-year{font-size:.72rem;letter-spacing:.1em;color:var(--fg-dim);padding-top:.2rem}
-.exp-role{font-family:var(--serif);font-size:1.2rem;letter-spacing:-.01em;margin-bottom:.3rem}
-.exp-place{font-size:.78rem;color:var(--fg-mid)}
-.exp-tags{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.6rem}
-.etag{font-size:.6rem;letter-spacing:.06em;padding:.18rem .5rem;border:1px solid var(--border);color:var(--fg-mid)}
-.exp-loc{font-size:.72rem;color:var(--fg-dim);white-space:nowrap}
-#skills-sec{padding:5rem 2rem;border-top:1px solid var(--border)}
-.skills-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:3rem}
-.skill-col h3{
-  font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--fg-dim);margin-bottom:1.2rem;
-  padding-bottom:.6rem;border-bottom:1px solid var(--border);
-}
-.skill-col ul{list-style:none;display:flex;flex-direction:column;gap:.5rem}
-.skill-col li{font-size:.82rem;color:var(--fg-mid)}
-.skill-col li::before{content:'→ ';color:var(--red)}
-@keyframes up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
-@media(max-width:768px){
-  #about-hero,#bio,#skills-sec .skills-cols{grid-template-columns:1fr;gap:2rem}
-  .exp-row{grid-template-columns:80px 1fr;gap:1rem}
-  .exp-loc{display:none}
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About — Mike Tj</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/montserrat@5.0.19/index.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/darker-grotesque@5.0.19/index.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/gfs-didot@5.0.19/index.min.css" />
 </head>
 <body>
-<div id="cur"></div>
-<div id="cur-r"></div>
-<div id="page-veil"></div>
+    <!-- Navigation -->
+    <nav class="nav">
+        <a href="index.html" class="nav-logo">MIKE TJ</a>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html" class="active">About</a></li>
+            <li><a href="index.html#works">Works</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
 
-<nav>
-  <a href="index.html" class="nav-logo" data-nav>MT*</a>
-  <span class="nav-center">About</span>
-  <ul class="nav-links">
-    <li><a href="work.html" data-nav>work</a></li>
-    <li><a href="lab.html" data-nav>lab</a></li>
-    <li><a href="about.html" class="active" data-nav>about</a></li>
-  </ul>
-</nav>
-
-<section id="about-hero">
-  <h1 class="about-hero-h1">Mike<br>Tjahyono</h1>
-  <p class="about-hero-sub">
-    AI Designer and Creative Technologist based in Jakarta, Indonesia.
-    Available for remote freelance, part-time, and full-time opportunities worldwide.
-    I work at the intersection of generative AI, design, and code —
-    turning creative chaos into reality.
-  </p>
-</section>
-
-<section id="bio">
-  <div class="bio-text sr">
-    <p>I'm a <strong>multidisciplinary creative</strong> with a BA in Interior & Spatial Design from LASALLE College of the Arts, Singapore (2017) and a deep obsession with what AI is doing to creative work.</p>
-    <p>I don't pick sides between design and code. I use <strong>Stable Diffusion, ComfyUI, Figma, SketchUp, and JavaScript</strong> depending on what the problem needs — sometimes all in the same project.</p>
-    <p>I work <strong>remote-first, async-friendly</strong>, and across timezones without missing a beat. Fluent in English and Bahasa Indonesia. Self-managed, cross-timezone, and deeply comfortable with tools like Slack, Notion, Loom, and Discord.</p>
-    <p>Currently exploring the frontier of <strong>AI-enhanced creative workflows</strong> — where generative tools don't replace the designer, they amplify them.</p>
-  </div>
-  <div class="sr sr-d1">
-    <div class="bio-stats">
-      <div class="stat-row">
-        <span class="stat-label">Experience</span>
-        <span class="stat-num">8+ yrs</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">Tools mastered</span>
-        <span class="stat-num">12+</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">Remote ready</span>
-        <span class="stat-num">100%</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">AI curiosity</span>
-        <span class="stat-num">∞</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="experience">
-  <div class="sec-head sr">
-    <h2 class="sec-title"># experience<span class="ast">*</span></h2>
-    <p class="sec-note">Career history, education, and certifications.</p>
-  </div>
-  <div class="exp-list">
-    <div class="exp-row sr">
-      <span class="exp-year">2023 — Now</span>
-      <div>
-        <div class="exp-role">AI Designer & Creative Technologist</div>
-        <div class="exp-place">Freelance · Remote</div>
-        <div class="exp-tags">
-          <span class="etag">Stable Diffusion</span>
-          <span class="etag">ComfyUI</span>
-          <span class="etag">Figma</span>
-          <span class="etag">JavaScript</span>
-          <span class="etag">Prompt Engineering</span>
+    <!-- About Content -->
+    <section class="section" style="padding-top: 120px;">
+        <div class="container">
+            <h1>About Me</h1>
+            <!-- Your about content -->
         </div>
-      </div>
-      <span class="exp-loc">Remote · Worldwide</span>
-    </div>
-    <div class="exp-row sr">
-      <span class="exp-year">2017 — 2023</span>
-      <div>
-        <div class="exp-role">Interior & Spatial Designer</div>
-        <div class="exp-place">Various Studios · Indonesia</div>
-        <div class="exp-tags">
-          <span class="etag">SketchUp</span>
-          <span class="etag">ArchiCAD</span>
-          <span class="etag">3D Rendering</span>
-          <span class="etag">Spatial Design</span>
-        </div>
-      </div>
-      <span class="exp-loc">Jakarta, Indonesia</span>
-    </div>
-    <div class="exp-row sr">
-      <span class="exp-year">2023</span>
-      <div>
-        <div class="exp-role">Full Stack Developer Certification</div>
-        <div class="exp-place">Triple10 · JavaScript</div>
-        <div class="exp-tags">
-          <span class="etag">JavaScript</span>
-          <span class="etag">Node.js</span>
-          <span class="etag">Full Stack</span>
-        </div>
-      </div>
-      <span class="exp-loc">Certification</span>
-    </div>
-    <div class="exp-row sr">
-      <span class="exp-year">2023</span>
-      <div>
-        <div class="exp-role">Stable Diffusion AI Imaging</div>
-        <div class="exp-place">Self-directed</div>
-        <div class="exp-tags">
-          <span class="etag">A1111 Forge</span>
-          <span class="etag">ComfyUI</span>
-          <span class="etag">LoRA Training</span>
-        </div>
-      </div>
-      <span class="exp-loc">Self-directed</span>
-    </div>
-    <div class="exp-row sr">
-      <span class="exp-year">2017</span>
-      <div>
-        <div class="exp-role">BA Interior & Spatial Design</div>
-        <div class="exp-place">LASALLE College of the Arts · Singapore</div>
-        <div class="exp-tags">
-          <span class="etag">Architectural Design</span>
-          <span class="etag">Spatial Design</span>
-          <span class="etag">3D</span>
-        </div>
-      </div>
-      <span class="exp-loc">Singapore</span>
-    </div>
-  </div>
-</section>
+    </section>
 
-<section id="skills-sec">
-  <div class="sec-head sr">
-    <h2 class="sec-title"># skills<span class="ast">*</span></h2>
-  </div>
-  <div class="skills-cols">
-    <div class="skill-col sr">
-      <h3>AI & Generative</h3>
-      <ul>
-        <li>Stable Diffusion A1111</li>
-        <li>ComfyUI</li>
-        <li>Prompt Engineering</li>
-        <li>Claude AI</li>
-        <li>AI Art Direction</li>
-        <li>LoRA Training</li>
-      </ul>
-    </div>
-    <div class="skill-col sr sr-d1">
-      <h3>Design Tools</h3>
-      <ul>
-        <li>Figma</li>
-        <li>Adobe Illustrator</li>
-        <li>Photoshop</li>
-        <li>InDesign</li>
-        <li>Dimension</li>
-        <li>SketchUp / ArchiCAD</li>
-      </ul>
-    </div>
-    <div class="skill-col sr sr-d2">
-      <h3>Development & Remote</h3>
-      <ul>
-        <li>JavaScript — Full Stack</li>
-        <li>GitHub</li>
-        <li>Adobe Rush</li>
-        <li>Notion / Slack / Loom</li>
-        <li>Asana / Trello</li>
-        <li>Discord / Zoom</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<div class="contact-strip sr">
-  <p class="label">got a project in mind?</p>
-  <h2 class="big">let's talk<br><em>together.</em></h2>
-  <a href="mailto:hello@miketjahyono.com" class="email">hello@miketjahyono.com</a>
-  <div class="contact-links">
-    <a href="https://linkedin.com/in/miketjahyono" target="_blank">LinkedIn</a>
-    <a href="https://behance.net/miketjahyono" target="_blank">Behance</a>
-    <a href="https://github.com/miketjahyono" target="_blank">GitHub</a>
-  </div>
-</div>
-
-<footer>
-  <p>© 2026 Mike Tjahyono — AI Designer</p>
-  <p>MT* /26</p>
-</footer>
-
-<script src="main.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
