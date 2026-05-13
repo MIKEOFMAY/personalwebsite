@@ -74,288 +74,478 @@ document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click
 }));
 
 // ==============================
-// 🎴 TAROT CARD STACK - FIXED & COMPLETE
+// 🎴 CARD STACK — SELECTED WORKS
 // ==============================
-class TarotCardStack {
-    constructor(sceneEl, cardImages) {
-        this.sceneEl = sceneEl;
-        this.cardImages = cardImages;
-        this.cards = [];
-        this.gone = new Set();
-        this.currentIndex = 0;
-        this.isDragging = false;
-        this.sceneWidth = sceneEl.offsetWidth || 380;
-        this.init();
-    }
 
-    init() {
-        this.cardImages.forEach((imgSrc, index) => {
-            const card = document.createElement('div');
-            card.className = 'tarot-card';
-            card.style.zIndex = this.cardImages.length - index;
-            
-            const yOffset = index * -4;
-            const randomRot = -10 + Math.random() * 20;
-            const scale = 1 - (index * 0.02);
-            
-            card.innerHTML = `
-                <div class="tarot-card-inner" style="
-                    transform: translateY(${yOffset}px) scale(${scale}) rotate(${randomRot}deg);
-                    background-image: url('${imgSrc}');
-                ">
-                    <span class="tarot-label">${index + 1}</span>
-                    ${index === 0 ? '<span class="tarot-hint">↑ Click any card to enlarge<br>↔ Drag top card to dismiss</span>' : ''}
-                </div>
-            `;
-            
-            this.sceneEl.appendChild(card);
-            this.cards.push(card);
-            
-            // ✅ Click ANY card to enlarge
-            card.addEventListener('click', (e) => {
-                if (this.isDragging) return;
-                e.stopPropagation();
-                this.enlargeCard(imgSrc);
-            });
-            
-            // Drag ONLY top card
-            if (index === 0) this.setupDrag(card, index);
-        });
-        
-        this.createNavButtons();
-        this.createDots();
-    }
-
-    setupDrag(card, index) {
-        const cardInner = card.querySelector('.tarot-card-inner');
-        let startX = 0, currentX = 0, velocityX = 0, lastTime = 0, lastX = 0;
-        const dragThreshold = 80;
-        
-        cardInner.addEventListener('mousedown', (e) => {
-            if (index !== this.currentIndex || this.gone.has(index)) return;
-            this.isDragging = true;
-            startX = e.clientX;
-            lastX = startX;
-            lastTime = Date.now();
-            cardInner.style.transition = 'none';
-            cardInner.style.cursor = 'grabbing';
-        });
-        
-        document.addEventListener('mousemove', (e) => {
-            if (!this.isDragging || index !== this.currentIndex) return;
-            currentX = e.clientX - startX;
-            const now = Date.now();
-            const dt = now - lastTime;
-            if (dt > 0) velocityX = (e.clientX - lastX) / dt * 16;
-            lastX = e.clientX;
-            lastTime = now;
-            const rot = currentX / 12;
-            cardInner.style.transform = `translate(${currentX}px, 0) rotate(${rot}deg) scale(1.05)`;
-        });
-        
-        document.addEventListener('mouseup', () => {
-        if (!this.isDragging || index !== this.currentIndex) return;
-        this.isDragging = false;
-        cardInner.style.cursor = 'grab';
-        
-        if (Math.abs(velocityX) > 20 || Math.abs(currentX) > dragThreshold) {  // ← velocityX was > 10
-            this.flyAway(card, index, currentX);
-        } else {
-            this.snapBack(card, index);
-        }
-    });
-}
-
-    flyAway(card, index, direction) {
-        const cardInner = card.querySelector('.tarot-card-inner');
-        const dir = direction < 0 ? -1 : 1;
-        const flyX = dir * (400 + this.sceneWidth);
-        
-        this.gone.add(index);
-        cardInner.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
-        cardInner.style.transform = `translate(${flyX}px, ${dir * 30}px) rotate(${dir * 25}deg) scale(0.9)`;
-        cardInner.style.opacity = '0';
-        
-        this.currentIndex = this.getNextActiveIndex();
-        this.updateDots();
-        
-        if (this.gone.size === this.cardImages.length) {
-            setTimeout(() => {
-                this.gone.clear();
-                this.currentIndex = 0;
-                this.resetAll();
-            }, 500);
-        }
-    }
-
-    snapBack(card, index) {
-        const cardInner = card.querySelector('.tarot-card-inner');
-        const yOffset = index * -4;
-        const randomRot = -10 + Math.random() * 20;
-        const scale = 1 - (index * 0.02);
-        cardInner.style.transition = 'transform 0.4s cubic-bezier(0.76,0,0.24,1)';
-        cardInner.style.transform = `translateY(${yOffset}px) scale(${scale}) rotate(${randomRot}deg)`;
-        cardInner.style.opacity = '1';
-    }
-
-    getNextActiveIndex() {
-        for (let i = 0; i < this.cardImages.length; i++) {
-            if (!this.gone.has(i)) return i;
-        }
-        return 0;
-    }
-
-    createNavButtons() {
-        const nav = document.createElement('div');
-        nav.className = 'tarot-nav';
-        nav.innerHTML = `
-            <button class="tarot-btn prev-btn">
-                <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-            </button>
-            <button class="tarot-btn next-btn">
-                <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-            </button>
-        `;
-        this.sceneEl.parentElement.appendChild(nav);
-        nav.querySelector('.prev-btn').onclick = () => this.navPrev();
-        nav.querySelector('.next-btn').onclick = () => this.navNext();
-    }
-
-    createDots() {
-        const dots = document.createElement('div');
-        dots.className = 'tarot-dots';
-        this.cardImages.forEach((_, i) => {
-            const dot = document.createElement('span');
-            dot.className = 'tarot-dot' + (i === 0 ? ' active' : '');
-            dot.dataset.idx = i;
-            dots.appendChild(dot);
-        });
-        this.sceneEl.parentElement.appendChild(dots);
-        this.dotsContainer = dots;
-    }
-
-    updateDots() {
-        if (!this.dotsContainer) return;
-        this.dotsContainer.querySelectorAll('.tarot-dot').forEach((dot, idx) => {
-            const isGone = this.gone.has(idx);
-            dot.classList.toggle('active', idx === this.currentIndex && !isGone);
-            dot.classList.toggle('invisible', isGone);
-        });
-    }
-
-    navNext() {
-        const i = this.currentIndex;
-        if (this.gone.has(i)) return;
-        this.flyAway(this.cards[i], i, 100);
-    }
-
-    navPrev() {
-        const goneIndices = Array.from(this.gone).sort((a, b) => b - a);
-        if (goneIndices.length === 0) return;
-        const lastGone = goneIndices[0];
-        this.gone.delete(lastGone);
-        this.snapBack(this.cards[lastGone], lastGone);
-        this.currentIndex = lastGone;
-        this.updateDots();
-    }
-
-    resetAll() {
-        this.cards.forEach((card, index) => {
-            const cardInner = card.querySelector('.tarot-card-inner');
-            const yOffset = index * -4;
-            const randomRot = -10 + Math.random() * 20;
-            const scale = 1 - (index * 0.02);
-            card.style.zIndex = this.cardImages.length - index;
-            cardInner.style.transition = 'transform 0.4s ease';
-            cardInner.style.transform = `translateY(${yOffset}px) scale(${scale}) rotate(${randomRot}deg)`;
-            cardInner.style.opacity = '1';
-        });
-        this.updateDots();
-    }
-
-    enlargeCard(imgSrc) {
-        if (document.querySelector('.tarot-modal')) return;
-        const modal = document.createElement('div');
-        modal.className = 'tarot-modal';
-        modal.innerHTML = `
-            <div class="tarot-modal-content">
-                <img src="${imgSrc}" alt="Enlarged" class="tarot-modal-image">
-                <button class="tarot-modal-close" aria-label="Close">✕</button>
-            </div>
-        `;
-        document.body.appendChild(modal);
-        const close = () => {
-            modal.style.opacity = '0';
-            setTimeout(() => modal.remove(), 200);
-        };
-        modal.onclick = (e) => { if (e.target === modal || e.target.closest('.tarot-modal-close')) close(); };
-        document.addEventListener('keydown', function onEsc(e) {
-            if (e.key === 'Escape') { close(); document.removeEventListener('keydown', onEsc); }
-        }, { once: true });
-    }
-}
+const workCards = [
+  {
+    title: 'Brand Identity',
+    desc: 'Visual identity system for a lifestyle brand — logomark, type hierarchy, and colour palette.',
+    tag: 'Branding',
+    bg: '#1a1a2e',
+    accent: '#e94560',
+  },
+  {
+    title: 'Editorial Layout',
+    desc: 'Magazine spread design for a quarterly arts publication, balancing image and long-form text.',
+    tag: 'Print',
+    bg: '#2d4a3e',
+    accent: '#88d498',
+  },
+  {
+    title: 'Motion Graphics',
+    desc: 'Animated title sequence and lower-thirds package for an independent short film.',
+    tag: 'Motion',
+    bg: '#2c1654',
+    accent: '#c77dff',
+  },
+  {
+    title: 'Web Design',
+    desc: 'End-to-end UX and visual design for an e-commerce experience — desktop and mobile.',
+    tag: 'Digital',
+    bg: '#1b2838',
+    accent: '#66c0f4',
+  },
+  {
+    title: 'Packaging',
+    desc: 'Product line packaging for a local food startup — structural design, illustration, and print prep.',
+    tag: 'Packaging',
+    bg: '#3d2b1f',
+    accent: '#f4a261',
+  },
+  {
+    title: 'Photography',
+    desc: 'Portrait series documenting creative workers across the city, shot on medium format film.',
+    tag: 'Photo',
+    bg: '#1c1c1c',
+    accent: '#e0e0e0',
+  },
+]
 
 // ==============================
 // CSS STYLES (auto-injected)
 // ==============================
-(function injectTarotStyles() {
-    const style = document.createElement('style');
-    style.textContent = `
-        .tarot-card{position:absolute;top:0;left:0;width:100%;height:100%;will-change:transform;cursor:grab;user-select:none;-webkit-user-select:none}
-        .tarot-card-inner{width:100%;height:100%;border-radius:15px;background-size:cover;background-position:center;background-repeat:no-repeat;box-shadow:0 20px 60px rgba(0,0,0,0.2);display:flex;align-items:flex-end;justify-content:center;padding-bottom:35px;transition:transform 0.3s ease,opacity 0.3s ease}
-        .tarot-card-inner:active{cursor:grabbing}
-        .tarot-label{background:rgba(0,0,0,0.75);color:#fff;font-family:var(--font-headers);font-weight:700;font-size:1rem;padding:10px 20px;border-radius:25px;text-align:center}
-        .tarot-hint{position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.95);color:var(--black);font-family:var(--font-headers);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.5px;padding:8px 14px;border-radius:18px;text-align:right;line-height:1.4;animation:pulse 2.5s ease-in-out infinite;max-width:140px}
-        @keyframes pulse{0%,100%{opacity:0.7;transform:scale(1)}50%{opacity:1;transform:scale(1.03)}}
-        .tarot-nav{display:flex;justify-content:center;gap:25px;margin-top:35px}
-        .tarot-btn{width:52px;height:52px;border-radius:50%;border:2px solid var(--gray-200);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.25s var(--ease);box-shadow:0 4px 12px rgba(0,0,0,0.08)}
-        .tarot-btn:hover{border-color:var(--orange);background:var(--orange);transform:translateY(-2px);box-shadow:0 8px 25px rgba(254,94,50,0.25)}
-        .tarot-btn:hover svg{stroke:var(--white)}
-        .tarot-btn svg{width:22px;height:22px;stroke:var(--black);stroke-width:2;fill:none}
-        .tarot-dots{display:flex;justify-content:center;gap:10px;margin-top:25px}
-        .tarot-dot{width:11px;height:11px;border-radius:50%;background:var(--gray-200);cursor:pointer;transition:all 0.25s var(--ease);border:2px solid transparent}
-        .tarot-dot.active{background:var(--orange);transform:scale(1.4);border-color:rgba(254,94,50,0.35)}
-        .tarot-dot.invisible{opacity:0;pointer-events:none}
-        .tarot-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;z-index:10000;opacity:1;transition:opacity 0.25s ease;animation:fadeIn 0.25s ease}
-        .tarot-modal-content{position:relative;max-width:96vw;max-height:96vh;animation:zoomIn 0.25s ease}
-        .tarot-modal-image{max-width:100%;max-height:92vh;border-radius:12px;box-shadow:0 25px 80px rgba(0,0,0,0.6);object-fit:contain;display:block}
-        .tarot-modal-close{position:absolute;top:-50px;right:0;background:#fff;border:none;width:42px;height:42px;border-radius:50%;font-size:26px;font-weight:300;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s ease;color:var(--black)}
-        .tarot-modal-close:hover{transform:scale(1.15);background:var(--orange);color:#fff}
-        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-        @keyframes zoomIn{from{transform:scale(0.92);opacity:0}to{transform:scale(1);opacity:1}}
-    `;
-    document.head.appendChild(style);
-})();
+;(function injectWorkStyles() {
+  const style = document.createElement('style')
+  style.textContent = `
+    .work-stack-scene {
+      position: relative;
+      width: 300px;
+      height: 420px;
+      margin: 0 auto;
+    }
+    .work-card {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      will-change: transform;
+      cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .work-card-inner {
+      width: 100%; height: 100%;
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 28px 26px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.25), 0 8px 20px rgba(0,0,0,0.15);
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s ease;
+      overflow: hidden;
+      position: relative;
+    }
+    .work-card-inner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, rgba(255,255,255,0.06) 0%, transparent 60%);
+      border-radius: inherit;
+      pointer-events: none;
+    }
+    .work-card-tag {
+      display: inline-block;
+      font-family: var(--font-headers);
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+      width: fit-content;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(6px);
+    }
+    .work-card-title {
+      font-family: var(--font-headers);
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #fff;
+      margin: 0 0 10px;
+      line-height: 1.2;
+      letter-spacing: -0.3px;
+    }
+    .work-card-desc {
+      font-family: var(--font-body, system-ui);
+      font-size: 0.8rem;
+      line-height: 1.55;
+      color: rgba(255,255,255,0.72);
+      margin: 0;
+    }
+    .work-card-num {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      font-family: var(--font-headers);
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 1px;
+    }
+    .work-hint {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(8px);
+      color: rgba(255,255,255,0.9);
+      font-family: var(--font-headers);
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 7px 12px;
+      border-radius: 20px;
+      line-height: 1.5;
+      animation: wPulse 2.5s ease-in-out infinite;
+    }
+    @keyframes wPulse {
+      0%,100% { opacity: 0.7; transform: scale(1); }
+      50%      { opacity: 1;   transform: scale(1.03); }
+    }
+
+    /* nav & dots */
+    .work-nav { display:flex; justify-content:center; gap:20px; margin-top:30px; }
+    .work-btn {
+      width:48px; height:48px; border-radius:50%;
+      border:2px solid var(--gray-200); background:var(--white);
+      cursor:pointer; display:flex; align-items:center; justify-content:center;
+      transition:all 0.25s var(--ease);
+      box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    }
+    .work-btn:hover {
+      border-color:var(--orange); background:var(--orange);
+      transform:translateY(-2px); box-shadow:0 8px 25px rgba(254,94,50,0.25);
+    }
+    .work-btn:hover svg { stroke:#fff; }
+    .work-btn svg { width:20px; height:20px; stroke:var(--black); stroke-width:2.5; fill:none; }
+    .work-dots { display:flex; justify-content:center; gap:9px; margin-top:22px; }
+    .work-dot {
+      width:10px; height:10px; border-radius:50%;
+      background:var(--gray-200); cursor:pointer;
+      transition:all 0.25s var(--ease); border:2px solid transparent;
+    }
+    .work-dot.active { background:var(--orange); transform:scale(1.4); border-color:rgba(254,94,50,0.35); }
+    .work-dot.gone   { opacity:0; pointer-events:none; }
+
+    /* modal */
+    .work-modal {
+      position:fixed; inset:0;
+      background:rgba(0,0,0,0.88);
+      display:flex; align-items:center; justify-content:center;
+      z-index:10000; animation:wFadeIn 0.22s ease;
+    }
+    .work-modal-card {
+      width: min(340px, 90vw);
+      height: min(480px, 88vh);
+      border-radius:22px;
+      display:flex; flex-direction:column; justify-content:flex-end;
+      padding:36px 32px;
+      position:relative;
+      overflow:hidden;
+      animation:wZoomIn 0.25s ease;
+      box-shadow:0 40px 120px rgba(0,0,0,0.5);
+    }
+    .work-modal-card::before {
+      content:'';
+      position:absolute; inset:0;
+      background:linear-gradient(160deg,rgba(255,255,255,0.07) 0%,transparent 60%);
+      pointer-events:none;
+    }
+    .work-modal-close {
+      position:absolute; top:-52px; right:0;
+      background:#fff; border:none;
+      width:40px; height:40px; border-radius:50%;
+      font-size:22px; font-weight:300; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      transition:all 0.2s ease; color:var(--black);
+    }
+    .work-modal-close:hover { transform:scale(1.12); background:var(--orange); color:#fff; }
+    @keyframes wFadeIn { from{opacity:0} to{opacity:1} }
+    @keyframes wZoomIn { from{transform:scale(0.9);opacity:0} to{transform:scale(1);opacity:1} }
+  `
+  document.head.appendChild(style)
+})()
 
 // ==============================
-// TAROT CARD IMAGES
+// CARD STACK CLASS
 // ==============================
-const tarotCardImages = [
-    'https://upload.wikimedia.org/wikipedia/commons/f/f5/RWS_Tarot_08_Strength.jpg',
-    'https://upload.wikimedia.org/wikipedia/commons/5/53/RWS_Tarot_16_Tower.jpg',
-    'https://upload.wikimedia.org/wikipedia/commons/9/9b/RWS_Tarot_07_Chariot.jpg',
-    'https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_06_Lovers.jpg',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/RWS_Tarot_02_High_Priestess.jpg/690px-RWS_Tarot_02_High_Priestess.jpg',
-    'https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg',
-];
+class WorkCardStack {
+  constructor(sceneEl, works) {
+    this.sceneEl = sceneEl
+    this.works = works
+    this.cards = []
+    this.gone = new Set()
+    this.currentIndex = 0
+    this.isDragging = false
+    this.init()
+  }
+
+  // 3D transform matching React Spring demo feel
+  trans(rot, scale) {
+    return `perspective(1500px) rotateX(4deg) rotateY(${rot / 10}deg) rotateZ(${rot}deg) scale(${scale})`
+  }
+
+  buildCardHTML(work, index, total) {
+    return `
+      <div class="work-card-inner" style="background:${work.bg};">
+        <span class="work-card-num">${String(index + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}</span>
+        ${index === 0 ? '<span class="work-hint">Click to enlarge · Drag to dismiss</span>' : ''}
+        <span class="work-card-tag" style="color:${work.accent};">${work.tag}</span>
+        <h3 class="work-card-title" style="color:#fff;">${work.title}</h3>
+        <p class="work-card-desc">${work.desc}</p>
+      </div>
+    `
+  }
+
+  init() {
+    this.works.forEach((work, index) => {
+      const card = document.createElement('div')
+      card.className = 'work-card'
+      card.style.zIndex = this.works.length - index
+
+      const yOff = index * -5
+      const rot = -8 + Math.random() * 16
+      card.innerHTML = this.buildCardHTML(work, index, this.works.length)
+
+      const inner = card.querySelector('.work-card-inner')
+      inner.style.transform = this.trans(rot, 1 - index * 0.02)
+      inner.style.marginTop = yOff + 'px'
+      inner._baseRot = rot
+      inner._baseScale = 1 - index * 0.02
+      inner._baseY = yOff
+
+      this.sceneEl.appendChild(card)
+      this.cards.push(card)
+
+      card.addEventListener('click', e => {
+        if (this.isDragging) return
+        e.stopPropagation()
+        this.enlargeCard(work)
+      })
+
+      if (index === 0) this.setupDrag(card, index)
+    })
+
+    this.createNav()
+    this.createDots()
+  }
+
+  setupDrag(card, index) {
+    const inner = card.querySelector('.work-card-inner')
+    let startX = 0, currentX = 0, velX = 0, lastX = 0, lastT = 0
+    const THRESHOLD = 80
+
+    inner.addEventListener('mousedown', e => {
+      if (index !== this.currentIndex || this.gone.has(index)) return
+      this.isDragging = false          // reset; set true on first move
+      startX = e.clientX
+      lastX = startX; lastT = Date.now()
+      inner.style.transition = 'none'
+      inner.style.cursor = 'grabbing'
+    })
+
+    document.addEventListener('mousemove', e => {
+      if (inner.style.cursor !== 'grabbing' || index !== this.currentIndex) return
+      this.isDragging = true
+      currentX = e.clientX - startX
+      const now = Date.now(), dt = now - lastT
+      if (dt > 0) velX = (e.clientX - lastX) / dt * 16
+      lastX = e.clientX; lastT = now
+      inner.style.transform = this.trans(currentX / 8, 1.06)
+      inner.style.marginTop = inner._baseY + 'px'
+    })
+
+    document.addEventListener('mouseup', () => {
+      if (inner.style.cursor !== 'grabbing' || index !== this.currentIndex) return
+      inner.style.cursor = 'grab'
+      const wasDragging = this.isDragging
+      setTimeout(() => { this.isDragging = false }, 50)
+
+      if (wasDragging && (Math.abs(velX) > 20 || Math.abs(currentX) > THRESHOLD)) {
+        this.flyAway(card, index, currentX)
+      } else {
+        this.snapBack(inner)
+      }
+      currentX = 0; velX = 0
+    })
+
+    // Touch support
+    inner.addEventListener('touchstart', e => {
+      startX = e.touches[0].clientX
+      lastX = startX; lastT = Date.now()
+      inner.style.transition = 'none'
+    }, { passive: true })
+
+    inner.addEventListener('touchmove', e => {
+      if (index !== this.currentIndex) return
+      this.isDragging = true
+      currentX = e.touches[0].clientX - startX
+      const now = Date.now(), dt = now - lastT
+      if (dt > 0) velX = (e.touches[0].clientX - lastX) / dt * 16
+      lastX = e.touches[0].clientX; lastT = now
+      inner.style.transform = this.trans(currentX / 8, 1.06)
+    }, { passive: true })
+
+    inner.addEventListener('touchend', () => {
+      const wasDragging = this.isDragging
+      setTimeout(() => { this.isDragging = false }, 50)
+      if (wasDragging && (Math.abs(velX) > 20 || Math.abs(currentX) > THRESHOLD)) {
+        this.flyAway(card, index, currentX)
+      } else {
+        this.snapBack(inner)
+      }
+      currentX = 0; velX = 0
+    })
+  }
+
+  flyAway(card, index, direction) {
+    const inner = card.querySelector('.work-card-inner')
+    const dir = direction < 0 ? -1 : 1
+    inner.style.transition = 'transform 0.4s ease, opacity 0.4s ease'
+    inner.style.transform = `perspective(1500px) rotateX(4deg) rotateY(${dir * 25}deg) rotateZ(${dir * 20}deg) translateX(${dir * 120}%) scale(0.9)`
+    inner.style.opacity = '0'
+    this.gone.add(index)
+    this.currentIndex = this.nextActive()
+    this.updateDots()
+
+    if (this.gone.size === this.works.length) {
+      setTimeout(() => { this.gone.clear(); this.currentIndex = 0; this.resetAll() }, 500)
+    }
+  }
+
+  snapBack(inner) {
+    inner.style.transition = 'transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease'
+    inner.style.transform = this.trans(inner._baseRot, inner._baseScale)
+    inner.style.opacity = '1'
+  }
+
+  nextActive() {
+    for (let i = 0; i < this.works.length; i++) {
+      if (!this.gone.has(i)) return i
+    }
+    return 0
+  }
+
+  createNav() {
+    const nav = document.createElement('div')
+    nav.className = 'work-nav'
+    nav.innerHTML = `
+      <button class="work-btn prev-btn" aria-label="Previous">
+        <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <button class="work-btn next-btn" aria-label="Next">
+        <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    `
+    this.sceneEl.parentElement.appendChild(nav)
+    nav.querySelector('.next-btn').onclick = () => this.navNext()
+    nav.querySelector('.prev-btn').onclick = () => this.navPrev()
+  }
+
+  createDots() {
+    const wrap = document.createElement('div')
+    wrap.className = 'work-dots'
+    this.works.forEach((_, i) => {
+      const d = document.createElement('span')
+      d.className = 'work-dot' + (i === 0 ? ' active' : '')
+      wrap.appendChild(d)
+    })
+    this.sceneEl.parentElement.appendChild(wrap)
+    this.dotsEl = wrap
+  }
+
+  updateDots() {
+    if (!this.dotsEl) return
+    this.dotsEl.querySelectorAll('.work-dot').forEach((d, i) => {
+      d.className = 'work-dot' +
+        (i === this.currentIndex && !this.gone.has(i) ? ' active' : '') +
+        (this.gone.has(i) ? ' gone' : '')
+    })
+  }
+
+  navNext() {
+    const i = this.currentIndex
+    if (!this.gone.has(i)) this.flyAway(this.cards[i], i, 100)
+  }
+
+  navPrev() {
+    const gone = Array.from(this.gone).sort((a, b) => b - a)
+    if (!gone.length) return
+    const last = gone[0]
+    this.gone.delete(last)
+    this.snapBack(this.cards[last].querySelector('.work-card-inner'))
+    this.currentIndex = last
+    this.updateDots()
+  }
+
+  resetAll() {
+    this.cards.forEach((card, i) => {
+      const inner = card.querySelector('.work-card-inner')
+      inner.style.transition = 'transform 0.45s ease, opacity 0.3s ease'
+      inner.style.opacity = '1'
+      inner.style.transform = this.trans(inner._baseRot, inner._baseScale)
+      inner.style.marginTop = inner._baseY + 'px'
+    })
+    this.updateDots()
+  }
+
+  enlargeCard(work) {
+    if (document.querySelector('.work-modal')) return
+    const modal = document.createElement('div')
+    modal.className = 'work-modal'
+    modal.innerHTML = `
+      <div class="work-modal-card" style="background:${work.bg};">
+        <button class="work-modal-close" aria-label="Close">✕</button>
+        <span class="work-card-tag" style="color:${work.accent}; margin-bottom:18px;">${work.tag}</span>
+        <h2 class="work-card-title" style="font-size:2rem; margin-bottom:14px;">${work.title}</h2>
+        <p class="work-card-desc" style="font-size:0.9rem;">${work.desc}</p>
+      </div>
+    `
+    document.body.appendChild(modal)
+    const close = () => { modal.style.opacity = '0'; setTimeout(() => modal.remove(), 200) }
+    modal.onclick = e => { if (e.target === modal || e.target.closest('.work-modal-close')) close() }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') close() }, { once: true })
+  }
+}
 
 // ==============================
 // BUILD WORKS SECTION
 // ==============================
-const worksContainer = document.getElementById('worksContainer');
+const worksContainer = document.getElementById('worksContainer')
 if (worksContainer) {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'card-stack-wrapper reveal';
-    wrapper.innerHTML = `
-        <div class="card-stack-header">
-            <span class="card-stack-num">04</span>
-            <h3 class="card-stack-title">Selected Works</h3>
-            <p class="card-stack-desc">Click any card to view full size • Drag top card to dismiss • Use arrows to navigate</p>
-        </div>
-        <div class="card-deck-scene" id="tarot-scene"></div>
-    `;
-    worksContainer.appendChild(wrapper);
-    const scene = document.getElementById('tarot-scene');
-    if (scene) new TarotCardStack(scene, tarotCardImages);
-    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  const wrapper = document.createElement('div')
+  wrapper.className = 'card-stack-wrapper reveal'
+  wrapper.innerHTML = `
+    <div class="card-stack-header">
+      <span class="card-stack-num">04</span>
+      <h3 class="card-stack-title">Selected Works</h3>
+      <p class="card-stack-desc">Click any card to enlarge · Drag to dismiss · Use arrows to navigate</p>
+    </div>
+    <div class="work-stack-scene" id="work-scene"></div>
+  `
+  worksContainer.appendChild(wrapper)
+  const scene = document.getElementById('work-scene')
+  if (scene) new WorkCardStack(scene, workCards)
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el))
 }
