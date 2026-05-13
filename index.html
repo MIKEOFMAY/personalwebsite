@@ -1,369 +1,297 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mike Tjahyono — AI Designer</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-<style>
-/* ── HERO ──────────────────────────────────── */
-#hero{
-  position:relative;
-  height:100svh;
-  display:flex;flex-direction:column;
-  justify-content:flex-end;
-  padding:calc(var(--nav) + 1rem) 2rem 3rem;
-  overflow:hidden;
-}
-.hero-bg{
-  position:absolute;inset:0;
-  background:#e8e4dc;
-  overflow:hidden;
-}
-.hero-bg video{
-  width:100%;height:100%;
-  object-fit:cover;
-  opacity:.18;
-}
-/* Horizontal scroll images behind hero text */
-.hero-images{
-  position:absolute;inset:0;
-  display:flex;align-items:center;gap:1rem;
-  padding:0 2rem;
-  pointer-events:none;
-  animation:img-drift 20s ease-in-out infinite alternate;
-}
-.hero-images img{
-  height:55vh;width:auto;
-  object-fit:cover;
-  opacity:.12;
-  filter:grayscale(1);
-}
-@keyframes img-drift{from{transform:translateX(0)}to{transform:translateX(-8%)}}
-
-.hero-content{position:relative;z-index:1}
-.hero-tag{
-  font-size:.68rem;letter-spacing:.22em;
-  text-transform:uppercase;color:var(--fg-mid);
-  margin-bottom:1rem;
-  opacity:0;animation:up .7s ease forwards .3s;
-}
-.hero-h1{
-  font-family:var(--serif);
-  font-size:clamp(3rem,8vw,8.5rem);
-  line-height:1;letter-spacing:-.03em;
-  margin-bottom:1rem;
-  opacity:0;animation:up .8s ease forwards .5s;
-}
-.hero-h1 em{font-style:italic;color:var(--fg-mid)}
-.hero-sub{
-  max-width:480px;font-size:.95rem;
-  color:var(--fg-mid);line-height:1.75;
-  opacity:0;animation:up .7s ease forwards .7s;
-}
-.hero-meta{
-  display:flex;gap:3rem;margin-top:2.5rem;flex-wrap:wrap;
-  opacity:0;animation:up .7s ease forwards .9s;
-}
-.meta-item{display:flex;flex-direction:column;gap:.2rem}
-.meta-l{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-dim)}
-.meta-v{font-size:.82rem;color:var(--fg)}
-.scroll-cue{
-  position:absolute;bottom:2rem;right:2rem;z-index:1;
-  display:flex;align-items:center;gap:.6rem;
-  font-size:.63rem;letter-spacing:.15em;text-transform:uppercase;color:var(--fg-dim);
-  opacity:0;animation:up .7s ease forwards 1.1s;
-}
-.scroll-cue::before{content:'';display:block;width:28px;height:1px;background:var(--fg-dim)}
-
-/* ── ABOUT TEXT ───────────────────────────── */
-#about-text{padding:5rem 2rem;border-top:1px solid var(--border)}
-.about-big{
-  font-family:var(--serif);
-  font-size:clamp(1.6rem,3.5vw,2.9rem);
-  line-height:1.25;letter-spacing:-.015em;
-  max-width:860px;
-}
-.about-big em{font-style:italic;color:var(--fg-mid)}
-.about-big a{
-  color:inherit;
-  border-bottom:1px solid var(--fg);
-  padding-bottom:.05em;
-  transition:color .2s,border-color .2s;
-}
-.about-big a:hover{color:var(--red);border-color:var(--red)}
-
-/* ── FEATURED WORK ────────────────────────── */
-#featured{padding:5rem 2rem}
-.work-rows{display:flex;flex-direction:column}
-.work-row{
-  display:grid;
-  grid-template-columns:auto 1fr auto auto;
-  align-items:center;
-  gap:1.5rem;
-  padding:1.6rem 0;
-  border-bottom:1px solid var(--border);
-  cursor:none;
-  transition:padding-left .3s var(--ease),background .25s;
-  position:relative;overflow:hidden;
-}
-.work-row::before{
-  content:'';position:absolute;inset:0;
-  background:var(--fg);opacity:0;
-  transition:opacity .3s;
-}
-.work-row:hover::before{opacity:.03}
-.work-row:hover{padding-left:1rem}
-.work-num{font-size:.62rem;letter-spacing:.18em;color:var(--fg-dim);min-width:28px}
-.work-title{
-  font-family:var(--serif);
-  font-size:clamp(1.2rem,2.5vw,2rem);
-  letter-spacing:-.015em;line-height:1;
-  transition:color .2s;
-}
-.work-row:hover .work-title{color:var(--red)}
-.work-tags-row{display:flex;gap:.4rem;flex-wrap:wrap}
-.wtag{
-  font-size:.6rem;letter-spacing:.06em;
-  padding:.2rem .5rem;
-  border:1px solid var(--border);
-  color:var(--fg-mid);
-}
-.work-client{font-size:.75rem;color:var(--fg-mid);white-space:nowrap}
-.work-arrow{
-  font-size:1.2rem;color:var(--fg-dim);
-  transition:color .2s,transform .2s;
-}
-.work-row:hover .work-arrow{color:var(--red);transform:translate(4px,-4px)}
-
-/* ── SERVICES ─────────────────────────────── */
-#services{padding:5rem 2rem}
-.services-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:1px;background:var(--border);
-}
-.scard{
-  background:var(--bg);padding:2.2rem;
-  display:flex;flex-direction:column;gap:1rem;
-  transition:background .2s;
-}
-.scard:hover{background:#ede9e0}
-.scard-num{font-size:.6rem;letter-spacing:.18em;color:var(--fg-dim)}
-.scard-icon{
-  width:46px;height:46px;
-  border:1px solid var(--border);
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.15rem;
-}
-.scard-name{
-  font-family:var(--serif);
-  font-size:1.35rem;letter-spacing:-.01em;line-height:1.1;
-}
-.scard-desc{font-size:.79rem;color:var(--fg-mid);line-height:1.75}
-.scard-list{
-  list-style:none;margin-top:auto;
-  display:flex;flex-direction:column;gap:.3rem;
-}
-.scard-list li{
-  font-size:.68rem;color:var(--fg-dim);letter-spacing:.04em;
-  padding-top:.3rem;border-top:1px solid var(--border);
-}
-
-@keyframes up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
-
-@media(max-width:768px){
-  .services-grid{grid-template-columns:1fr}
-  .work-row{grid-template-columns:auto 1fr auto;gap:.8rem}
-  .work-client{display:none}
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mike Tj — Multidisciplinary Designer</title>
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/montserrat@5.0.19/index.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/darker-grotesque@5.0.19/index.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/gfs-didot@5.0.19/index.min.css" />
 </head>
 <body>
-<div id="cur"></div>
-<div id="cur-r"></div>
-<div id="page-veil"></div>
+    <div class="loader" id="loader"><div class="loader-text">Loading</div><div class="loader-bar"></div></div>
+    <div class="cursor-dot" id="cDot"></div>
+    <div class="cursor-outline" id="cOut"></div>
+    <div class="progress-bar" id="pBar"></div>
+    <div class="gradient-bg" id="gradientBg"></div>
 
-<nav>
-  <a href="index.html" class="nav-logo" data-nav>MT*</a>
-  <span class="nav-center">AI Designer · Jakarta</span>
-  <ul class="nav-links">
-    <li><a href="work.html" data-nav>work</a></li>
-    <li><a href="lab.html" data-nav>lab</a></li>
-    <li><a href="about.html" data-nav>about</a></li>
-  </ul>
-</nav>
+    <nav class="nav" id="nav">
+        <a href="#hero" class="nav-logo">MIKE TJ</a>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#about">About</a></li>
+            <li><a href="#education">Education</a></li>
+            <li><a href="#experience">Experience</a></li>
+            <li><a href="#works">Works</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <button class="nav-toggle" id="navToggle" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+    </nav>
 
-<!-- HERO -->
-<section id="hero">
-  <div class="hero-bg">
-    <!-- Put your showreel mp4 URL inside src="" below -->
-    <video autoplay muted loop playsinline><source src="" type="video/mp4"></video>
-  </div>
-  <div class="hero-content">
-    <p class="hero-tag">Available for remote work · Jakarta, Indonesia</p>
-    <h1 class="hero-h1">Mike Tjahyono<br><em>AI Designer</em></h1>
-    <p class="hero-sub">Turning creative chaos into reality. I work at the intersection of AI, design, and code — Stable Diffusion to Figma to JavaScript, whatever the problem needs.</p>
-    <div class="hero-meta">
-      <div class="meta-item"><span class="meta-l">Based in</span><span class="meta-v">Jakarta, ID</span></div>
-      <div class="meta-item"><span class="meta-l">Available</span><span class="meta-v">Remote · Freelance · Full-time</span></div>
-      <div class="meta-item"><span class="meta-l">Since</span><span class="meta-v">2017</span></div>
-    </div>
-  </div>
-  <div class="scroll-cue">scroll</div>
-</section>
-
-<!-- ABOUT TEXT -->
-<section id="about-text">
-  <p class="about-big sr">
-    Mike is a multidisciplinary AI designer and creative technologist who blends
-    <em>Art Direction, Generative AI, UI/UX,</em> and <em>3D Spatial Design</em>
-    into cohesive visual storytelling. He leads projects end-to-end — from discovery
-    to shipped — staying hands-on with a deep love for turning
-    <a href="work.html" data-nav>ideas into realities.</a>
-  </p>
-</section>
-
-<!-- FEATURED WORK -->
-<section id="featured">
-  <div class="sec-head sr">
-    <h2 class="sec-title"># featured work<span class="ast">*</span></h2>
-    <p class="sec-note">Ideas that survived the jump from the brain to the screen.</p>
-  </div>
-  <div class="work-rows">
-    <a href="work/project1.html" class="work-row sr" data-nav>
-      <span class="work-num">01</span>
-      <div>
-        <h3 class="work-title">Generative Brand Identity</h3>
-        <div class="work-tags-row">
-          <span class="wtag">Stable Diffusion</span><span class="wtag">AI Art Direction</span><span class="wtag">Figma</span>
+    <!-- HERO -->
+    <section class="hero" id="hero">
+        <div class="hero-grid"></div>
+        <div class="hero-content">
+            <p class="hero-label">Multidisciplinary Designer & Creative Director</p>
+            <h1 class="hero-title">Designing<br><em>End-to-End</em><br>Experiences</h1>
+            <p class="hero-desc">8+ years spanning interior design, brand identity, product development, and creative direction — across Singapore and Indonesia.</p>
+            <a href="#works" class="hero-cta">
+                View Selected Works
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
         </div>
-      </div>
-      <span class="work-client">Self-initiated</span>
-      <span class="work-arrow">↗</span>
-    </a>
-    <a href="work/project2.html" class="work-row sr" data-nav>
-      <span class="work-num">02</span>
-      <div>
-        <h3 class="work-title">App Redesign — Dark UI System</h3>
-        <div class="work-tags-row">
-          <span class="wtag">UI/UX</span><span class="wtag">Figma</span><span class="wtag">Research</span>
+        <div class="scroll-indicator"><span>Scroll</span><div class="scroll-line"></div></div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="section" id="about">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-num">01</span>
+                <h2 class="section-title">About Me</h2>
+                <p class="section-sub">Broad creative range with independent execution</p>
+            </div>
+            <div class="about-grid">
+                <div class="about-photo-wrap reveal reveal-d1">
+                    <img src="images/about-photo.jpg" alt="Mike Tj Portrait" class="about-photo" />
+                </div>
+                <div class="reveal reveal-d2">
+                    <div class="about-text">
+                        <p>Hello! I'm <strong>Mike Tj</strong>, a multidisciplinary designer with 8+ years of experience spanning interior design, brand identity, product development, and creative direction across Singapore and Indonesia.</p>
+                        <p>I've built and run <strong>4 independent design-led ventures</strong> from 2020 to 2025, developing end-to-end ownership over brand, product, and digital presence. I'm proficient in AI-assisted design workflows (Stable Diffusion, ComfyUI), full-stack JavaScript, and Figma.</p>
+                        <p>Now seeking a remote design role where broad creative range and independent execution can contribute to a larger team.</p>
+                    </div>
+                    <div class="skills-wrap">
+                        <span class="skill-tag">Figma</span>
+                        <span class="skill-tag">SketchUp</span>
+                        <span class="skill-tag">ArchiCAD</span>
+                        <span class="skill-tag">Adobe Suite</span>
+                        <span class="skill-tag">Stable Diffusion</span>
+                        <span class="skill-tag">ComfyUI</span>
+                        <span class="skill-tag">JavaScript</span>
+                        <span class="skill-tag">React</span>
+                        <span class="skill-tag">Brand Identity</span>
+                        <span class="skill-tag">Product Design</span>
+                        <span class="skill-tag">Creative Direction</span>
+                        <span class="skill-tag">Interior Design</span>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-      <span class="work-client">Fintech · Indonesia</span>
-      <span class="work-arrow">↗</span>
-    </a>
-    <a href="work/project3.html" class="work-row sr" data-nav>
-      <span class="work-num">03</span>
-      <div>
-        <h3 class="work-title">AI-Enhanced Interior Visualization</h3>
-        <div class="work-tags-row">
-          <span class="wtag">SketchUp</span><span class="wtag">Stable Diffusion</span><span class="wtag">3D</span>
+    </section>
+
+    <!-- EDUCATION -->
+    <section class="section edu-section" id="education">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-num">02</span>
+                <h2 class="section-title">Education</h2>
+                <p class="section-sub">Academic foundation and continuous learning</p>
+            </div>
+            <div class="edu-timeline">
+                <div class="edu-item reveal">
+                    <span class="edu-date">2017</span>
+                    <h3 class="edu-degree">Bachelor of Arts — Interior and Spatial Design</h3>
+                    <p class="edu-school">LASALLE College of the Arts, Singapore</p>
+                    <p class="edu-desc">Major: Architectural and Spatial Design. Developed strong foundations in spatial planning, material specifications, and 3D visualization.</p>
+                </div>
+                <div class="edu-item reveal reveal-d1">
+                    <span class="edu-date">2023</span>
+                    <h3 class="edu-degree">Full Stack Developer (JavaScript)</h3>
+                    <p class="edu-school">Triple10</p>
+                    <p class="edu-desc">Comprehensive training in full-stack JavaScript development, covering frontend frameworks, backend APIs, and deployment strategies.</p>
+                </div>
+                <div class="edu-item reveal reveal-d2">
+                    <span class="edu-date">2023</span>
+                    <h3 class="edu-degree">Stable Diffusion AI Imaging</h3>
+                    <p class="edu-school">Self-directed Learning</p>
+                    <p class="edu-desc">Mastery of Stable Diffusion A1111 (Forge 2) and ComfyUI for AI-assisted design workflows, prompt engineering, and generative image creation.</p>
+                </div>
+            </div>
+            <div class="edu-cert reveal reveal-d3">
+                <h4>Core Competencies</h4>
+                <p style="margin-bottom:15px; color:var(--gray-500); font-size:0.95rem;">Design tools: SketchUp · ArchiCAD · Figma · Adobe Illustrator · Photoshop · InDesign · Dimension · Adobe Rush</p>
+                <p style="margin-bottom:15px; color:var(--gray-500); font-size:0.95rem;">AI & generative: Stable Diffusion A1111 (Forge 2) · ComfyUI · Claude AI · Prompt engineering</p>
+                <p style="margin-bottom:15px; color:var(--gray-500); font-size:0.95rem;">Development: JavaScript (Full Stack) · GitHub</p>
+                <p style="margin-bottom:15px; color:var(--gray-500); font-size:0.95rem;">Remote tools: Slack · Notion · Zoom · Asana · Trello · Loom · Discord</p>
+                <p style="color:var(--gray-500); font-size:0.95rem;">Languages: Bahasa Indonesia (native) · English (fluent)</p>
+            </div>
         </div>
-      </div>
-      <span class="work-client">Residential Client</span>
-      <span class="work-arrow">↗</span>
-    </a>
-    <a href="work/project4.html" class="work-row sr" data-nav>
-      <span class="work-num">04</span>
-      <div>
-        <h3 class="work-title">Full Stack Web Application</h3>
-        <div class="work-tags-row">
-          <span class="wtag">JavaScript</span><span class="wtag">Full Stack</span><span class="wtag">UI Design</span>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section class="section" id="experience">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-num">03</span>
+                <h2 class="section-title">Experience</h2>
+                <p class="section-sub">Building brands from concept to market</p>
+            </div>
+            <div class="exp-list">
+                <div class="exp-item reveal">
+                    <div class="exp-header">
+                        <h3 class="exp-role">Designer & Founder</h3>
+                        <span class="exp-period">2023 — 2025</span>
+                    </div>
+                    <p class="exp-company">GOATGOAT — Homemade Cosmetics</p>
+                    <div class="exp-desc">
+                        <ul>
+                            <li>Designed all brand identity, packaging, and product visuals from concept to market-ready assets</li>
+                            <li>Built and maintained the brand's digital presence, including e-commerce and social media creative</li>
+                            <li>Used AI imaging tools (Stable Diffusion A1111) to prototype product visuals and reduce design iteration time</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="exp-item reveal reveal-d1">
+                    <div class="exp-header">
+                        <h3 class="exp-role">Creative Director</h3>
+                        <span class="exp-period">2020 — 2023</span>
+                    </div>
+                    <p class="exp-company">Monk and Co — Casual Male Fashion Brand</p>
+                    <div class="exp-desc">
+                        <ul>
+                            <li>Led creative direction for a casual menswear brand — overseeing visual identity, campaign design, and product line aesthetics</li>
+                            <li>Drove a 30% increase in search engine visibility in 2023 through consistent brand language and digital content strategy</li>
+                            <li>Conceptualised and designed 5 new complementary products to extend the brand's core range</li>
+                            <li>Managed external collaborators and communicated brand direction asynchronously via Notion and Discord</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="exp-item reveal reveal-d2">
+                    <div class="exp-header">
+                        <h3 class="exp-role">Designer & Founder</h3>
+                        <span class="exp-period">2020 — 2022</span>
+                    </div>
+                    <p class="exp-company">May's Organic — Homemade Cosmetics</p>
+                    <div class="exp-desc">
+                        <ul>
+                            <li>Developed full brand identity including logo, packaging, and tone of voice for a homemade organic cosmetics line</li>
+                            <li>Handled product photography, marketing collateral, and customer-facing content independently</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="exp-item reveal">
+                    <div class="exp-header">
+                        <h3 class="exp-role">Designer & Founder</h3>
+                        <span class="exp-period">2020 — 2021</span>
+                    </div>
+                    <p class="exp-company">Twin's Thesis — Clothing Store</p>
+                    <div class="exp-desc">
+                        <ul>
+                            <li>Designed clothing range and built brand identity for an independent fashion label</li>
+                            <li>Managed production coordination and visual merchandising from concept through to sale</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="exp-item reveal reveal-d1">
+                    <div class="exp-header">
+                        <h3 class="exp-role">Designer & Founder</h3>
+                        <span class="exp-period">2019 — 2020</span>
+                    </div>
+                    <p class="exp-company">Mazuma Bot — Forex Trading Solution</p>
+                    <div class="exp-desc">
+                        <ul>
+                            <li>Designed the UI and brand presentation for an automated forex trading platform</li>
+                            <li>Collaborated with a developer to align product functionality with user-facing design</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="exp-item reveal reveal-d2">
+                    <div class="exp-header">
+                        <h3 class="exp-role">Interior Designer</h3>
+                        <span class="exp-period">2018 — 2020</span>
+                    </div>
+                    <p class="exp-company">Rukita.co — Residential & Hospitality · Jakarta, Indonesia</p>
+                    <div class="exp-desc">
+                        <ul>
+                            <li>Delivered interior design solutions for residential and co-living properties across Jakarta</li>
+                            <li>Coordinated with contractors and project managers to ensure design intent was executed on site</li>
+                            <li>Worked across multiple concurrent projects, managing timelines and stakeholder expectations independently</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="exp-item reveal">
+                    <div class="exp-header">
+                        <h3 class="exp-role">Interior Designer</h3>
+                        <span class="exp-period">2017 — 2018</span>
+                    </div>
+                    <p class="exp-company">EThree5 · Singapore</p>
+                    <div class="exp-desc">
+                        <ul>
+                            <li>Produced technical drawings, 3D renders, and material specifications for residential interiors</li>
+                            <li>Collaborated with cross-cultural teams and international clients in a professional design studio environment</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="exp-item reveal reveal-d1">
+                    <div class="exp-header">
+                        <h3 class="exp-role">Interior Designer</h3>
+                        <span class="exp-period">2017</span>
+                    </div>
+                    <p class="exp-company">Pituostto · Singapore</p>
+                    <div class="exp-desc">
+                        <ul>
+                            <li>Supported senior designers on residential projects — spatial planning, client presentations, and documentation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-      <span class="work-client">Self-initiated</span>
-      <span class="work-arrow">↗</span>
-    </a>
-    <a href="work/project5.html" class="work-row sr" data-nav>
-      <span class="work-num">05</span>
-      <div>
-        <h3 class="work-title">AI Motion Reel</h3>
-        <div class="work-tags-row">
-          <span class="wtag">ComfyUI</span><span class="wtag">Adobe Rush</span><span class="wtag">Motion</span>
+    </section>
+
+    <!-- SELECTED WORKS -->
+    <section class="section works-section" id="works">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-num">04</span>
+                <h2 class="section-title">Selected Works</h2>
+                <p class="section-sub">A curated collection of projects spanning brand, product, and digital design</p>
+            </div>
+            <div class="works-intro reveal">
+                <p>Each project represents a complete journey from concept to execution. Drag the cards to explore different perspectives — flick hard to dismiss.</p>
+            </div>
+            <div id="worksContainer"></div>
         </div>
-      </div>
-      <span class="work-client">Self-initiated</span>
-      <span class="work-arrow">↗</span>
-    </a>
-  </div>
-  <div style="margin-top:2rem;text-align:right">
-    <a href="work.html" class="hover-link sr" data-nav style="font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid var(--border);padding-bottom:.15rem;transition:color .2s,border-color .2s">view all work →</a>
-  </div>
-</section>
+    </section>
 
-<!-- TICKER -->
-<div class="ticker-wrap sr">
-  <div class="ticker-inner">
-    <span>AI Design</span><span class="dot">✦</span><span>Stable Diffusion</span><span class="dot">✦</span><span>ComfyUI</span><span class="dot">✦</span><span>UI/UX</span><span class="dot">✦</span><span>3D Design</span><span class="dot">✦</span><span>JavaScript</span><span class="dot">✦</span><span>Prompt Engineering</span><span class="dot">✦</span><span>Motion Design</span><span class="dot">✦</span><span>Remote Native</span><span class="dot">✦</span><span>Art Direction</span><span class="dot">✦</span>
-    <span>AI Design</span><span class="dot">✦</span><span>Stable Diffusion</span><span class="dot">✦</span><span>ComfyUI</span><span class="dot">✦</span><span>UI/UX</span><span class="dot">✦</span><span>3D Design</span><span class="dot">✦</span><span>JavaScript</span><span class="dot">✦</span><span>Prompt Engineering</span><span class="dot">✦</span><span>Motion Design</span><span class="dot">✦</span><span>Remote Native</span><span class="dot">✦</span><span>Art Direction</span><span class="dot">✦</span>
-  </div>
-</div>
+    <!-- CONTACT -->
+    <section class="contact-section" id="contact">
+        <div class="container reveal">
+            <h2 class="contact-heading">Let's Work<br>Together</h2>
+            <p class="contact-sub">Seeking a remote design role where broad creative range and independent execution can contribute to a larger team.</p>
+            <div class="contact-btns">
+                <a href="mailto:mike@example.com" class="contact-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    Email
+                </a>
+                <a href="#" class="contact-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                    GitHub
+                </a>
+                <a href="#" class="contact-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                    LinkedIn
+                </a>
+            </div>
+        </div>
+    </section>
 
-<!-- SERVICES -->
-<section id="services" style="padding:5rem 2rem">
-  <div class="sec-head sr">
-    <h2 class="sec-title"># what i do<span class="ast">*</span></h2>
-    <p class="sec-note">AI-first design and creative storytelling — visuals, motion, and interaction that are strong and purposeful.</p>
-  </div>
-  <div class="services-grid">
-    <div class="scard sr">
-      <span class="scard-num">(01)</span>
-      <div class="scard-icon">🤖</div>
-      <h3 class="scard-name">AI & Generative Design</h3>
-      <p class="scard-desc">Creating visuals using generative AI. I bridge creative vision and AI tooling to produce work that would take a whole team — solo, in hours.</p>
-      <ul class="scard-list">
-        <li>(01.01) Stable Diffusion / ComfyUI</li>
-        <li>(01.02) Prompt Engineering</li>
-        <li>(01.03) AI Art Direction</li>
-        <li>(01.04) Generative Brand Assets</li>
-      </ul>
-    </div>
-    <div class="scard sr sr-d1">
-      <span class="scard-num">(02)</span>
-      <div class="scard-icon">🎨</div>
-      <h3 class="scard-name">Design & Creative Direction</h3>
-      <p class="scard-desc">From wireframe to polished UI. Brand systems, spatial design, print, and digital. Turning complex concepts into beautiful realities.</p>
-      <ul class="scard-list">
-        <li>(02.01) UI/UX Design — Figma</li>
-        <li>(02.02) Brand Systems</li>
-        <li>(02.03) 3D & Spatial Design</li>
-        <li>(02.04) Print — Illustrator / InDesign</li>
-      </ul>
-    </div>
-    <div class="scard sr sr-d2">
-      <span class="scard-num">(03)</span>
-      <div class="scard-icon">💻</div>
-      <h3 class="scard-name">Development & Motion</h3>
-      <p class="scard-desc">Full stack JavaScript — I build what I design, no handoff needed. Motion graphics and AI-enhanced video for content that moves.</p>
-      <ul class="scard-list">
-        <li>(03.01) JavaScript — Full Stack</li>
-        <li>(03.02) Motion Graphics</li>
-        <li>(03.03) AI Video — Adobe Rush</li>
-        <li>(03.04) End-to-end Delivery</li>
-      </ul>
-    </div>
-  </div>
-</section>
+    <footer class="footer">
+        <span>© 2025 Mike Tj. All rights reserved.</span>
+        <div class="footer-links">
+            <a href="#about">About</a>
+            <a href="#works">Works</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </footer>
 
-<!-- CONTACT -->
-<div class="contact-strip sr">
-  <p class="label">got a project in mind?</p>
-  <h2 class="big">let's talk<br><em>together.</em></h2>
-  <a href="mailto:hello@miketjahyono.com" class="email">hello@miketjahyono.com</a>
-  <div class="contact-links">
-    <a href="https://linkedin.com/in/miketjahyono" target="_blank">LinkedIn</a>
-    <a href="https://behance.net/miketjahyono" target="_blank">Behance</a>
-    <a href="https://github.com/miketjahyono" target="_blank">GitHub</a>
-  </div>
-</div>
-
-<footer>
-  <p>© 2026 Mike Tjahyono — AI Designer</p>
-  <p>MT* /26</p>
-</footer>
-
-<script src="main.js"></script>
+    <!-- External JavaScript -->
+    <script src="js/main.js"></script>
 </body>
 </html>
