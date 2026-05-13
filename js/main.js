@@ -36,18 +36,112 @@ window.addEventListener('scroll', () => { nav?.classList.toggle('scrolled', wind
 // ==============================
 // PROGRESS & GRADIENT
 // ==============================
-const pBar = document.getElementById('pBar');
-window.addEventListener('scroll', () => {
-    const s = document.documentElement.scrollTop || document.body.scrollTop;
-    const h = document.documentElement.scrollHeight - window.innerHeight;
-    if(pBar) pBar.style.width = ((s / h) * 100) + '%';
-});
-const gradientBg = document.getElementById('gradientBg');
-window.addEventListener('scroll', () => {
-    const s = document.documentElement.scrollTop || document.body.scrollTop;
-    const h = document.documentElement.scrollHeight - window.innerHeight;
-    gradientBg?.classList.toggle('active', (s / h) > 0.15);
-});
+// ==============================
+// PROGRESS & GRADIENT
+// ==============================
+const pBar = document.getElementById('pBar')
+const gradientBg = document.getElementById('gradientBg')
+
+// --- Pixel canvas setup ---
+const pixelCanvas = document.createElement('canvas')
+pixelCanvas.setAttribute('aria-hidden', 'true')
+pixelCanvas.style.cssText = [
+  'position:fixed', 'top:0', 'left:0',
+  'width:100vw', 'height:100vh',
+  'pointer-events:none', 'z-index:0',
+  'image-rendering:pixelated',
+  'mix-blend-mode:screen',
+  'opacity:0'
+].join(';')
+document.body.appendChild(pixelCanvas)
+const pCtx = pixelCanvas.getContext('2d')
+
+function resizePixelCanvas() {
+  pixelCanvas.width  = Math.ceil(window.innerWidth  / 6)
+  pixelCanvas.height = Math.ceil(window.innerHeight / 6)
+  pixelCanvas.style.width  = window.innerWidth  + 'px'
+  pixelCanvas.style.height = window.innerHeight + 'px'
+}
+resizePixelCanvas()
+window.addEventListener('resize', resizePixelCanvas)
+
+const PIXEL_PALETTE = [
+  [254, 94,  50,  0.55],
+  [255, 140, 80,  0.40],
+  [200, 80,  120, 0.35],
+  [120, 60,  180, 0.30],
+  [40,  40,  80,  0.45],
+  [255, 220, 180, 0.25],
+]
+
+function drawPixels(progress) {
+  const w = pixelCanvas.width
+  const h = pixelCanvas.height
+  pCtx.clearRect(0, 0, w, h)
+  const density  = progress * progress * 0.65
+  const maxAlpha = progress * 0.9
+  for (let x = 0; x < w; x++) {
+    for (let y = 0; y < h; y++) {
+      if (Math.random() > density) continue
+      const col   = PIXEL_PALETTE[Math.floor(Math.random() * PIXEL_PALETTE.length)]
+      const alpha = col[3] * maxAlpha * (0.4 + Math.random() * 0.6)
+      pCtx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${alpha})`
+      pCtx.fillRect(x, y, 1, 1)
+    }
+  }
+}
+
+// --- Unified scroll handler ---
+let lastProgress = -1
+let rafId = null
+
+function onScroll() {
+  const s = document.documentElement.scrollTop || document.body.scrollTop
+  const h = document.documentElement.scrollHeight - window.innerHeight
+  const scrollRatio = h > 0 ? s / h : 0
+
+  // Progress bar
+  if (pBar) pBar.style.width = (scrollRatio * 100) + '%'
+
+  // Find education section to anchor gradient start
+  const eduSection = document.getElementById('education')
+                  || document.querySelector('section:nth-of-type(2)')
+  let startRatio = 0.12
+  if (eduSection) {
+    const eduTop = eduSection.getBoundingClientRect().top + s
+    startRatio = eduTop / document.documentElement.scrollHeight
+  }
+
+  // progress: 0 when education enters view → 1 at page bottom
+  const rawProgress = (scrollRatio - startRatio) / (1 - startRatio)
+  const progress    = Math.min(1, Math.max(0, rawProgress))
+
+  // Gradient background
+  if (gradientBg) {
+    if (progress > 0) {
+      gradientBg.classList.add('active')
+      gradientBg.style.opacity          = Math.min(1, progress * 2).toFixed(3)
+      gradientBg.style.backgroundPosition = `0% ${(progress * 80).toFixed(1)}%`
+    } else {
+      gradientBg.classList.remove('active')
+      gradientBg.style.opacity           = '0'
+      gradientBg.style.backgroundPosition = '0% 0%'
+    }
+    gradientBg.style.setProperty('--grad-progress', progress.toFixed(3))
+  }
+
+  // Pixel overlay — skip repaint if progress barely changed
+  pixelCanvas.style.opacity = (progress * 0.75).toFixed(3)
+  if (Math.abs(progress - lastProgress) >= 0.008) {
+    lastProgress = progress
+    cancelAnimationFrame(rafId)
+    rafId = requestAnimationFrame(() => drawPixels(progress))
+  }
+}
+
+window.addEventListener('scroll', onScroll, { passive: true })
+window.addEventListener('resize', onScroll)
+onScroll() 
 
 // ==============================
 // REVEAL & NAV ACTIVE
