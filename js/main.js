@@ -27,8 +27,8 @@ document.querySelectorAll('a, button, .skill-tag, .card-deck-btn, .card-dot, .co
 // ==============================
 const navTog = document.getElementById('navToggle'), navLks = document.getElementById('navLinks');
 navTog?.addEventListener('click', () => { navTog.classList.toggle('active'); navLks?.classList.toggle('active'); });
-document.querySelectorAll('.nav-links a').forEach(l => l.addEventListener('click', () => { 
-    navTog?.classList.remove('active'); navLks?.classList.remove('active'); 
+document.querySelectorAll('.nav-links a').forEach(l => l.addEventListener('click', () => {
+    navTog?.classList.remove('active'); navLks?.classList.remove('active');
 }));
 const nav = document.getElementById('nav');
 window.addEventListener('scroll', () => { nav?.classList.toggle('scrolled', window.scrollY > 50); });
@@ -36,13 +36,10 @@ window.addEventListener('scroll', () => { nav?.classList.toggle('scrolled', wind
 // ==============================
 // PROGRESS & GRADIENT
 // ==============================
-// ==============================
-// PROGRESS & GRADIENT
-// ==============================
 const pBar = document.getElementById('pBar')
 const gradientBg = document.getElementById('gradientBg')
 
-// --- Pixel canvas setup ---
+// Pixel canvas setup
 const pixelCanvas = document.createElement('canvas')
 pixelCanvas.setAttribute('aria-hidden', 'true')
 pixelCanvas.style.cssText = [
@@ -91,7 +88,6 @@ function drawPixels(progress) {
   }
 }
 
-// --- Unified scroll handler ---
 let lastProgress = -1
 let rafId = null
 
@@ -100,37 +96,26 @@ function onScroll() {
   const h = document.documentElement.scrollHeight - window.innerHeight
   const scrollRatio = h > 0 ? s / h : 0
 
-  // Progress bar
   if (pBar) pBar.style.width = (scrollRatio * 100) + '%'
 
-  // Find education section to anchor gradient start
-  const eduSection = document.getElementById('education')
-                  || document.querySelector('section:nth-of-type(2)')
-  let startRatio = 0.12
-  if (eduSection) {
-    const eduTop = eduSection.getBoundingClientRect().top + s
-    startRatio = eduTop / document.documentElement.scrollHeight
-  }
-
-  // progress: 0 when education enters view → 1 at page bottom
+  // Gradient starts from very first scroll (hero grid incorporates into gradient)
+  const startRatio = 0.0
   const rawProgress = (scrollRatio - startRatio) / (1 - startRatio)
   const progress    = Math.min(1, Math.max(0, rawProgress))
 
-  // Gradient background
   if (gradientBg) {
     if (progress > 0) {
       gradientBg.classList.add('active')
-      gradientBg.style.opacity          = Math.min(1, progress * 2).toFixed(3)
-      gradientBg.style.backgroundPosition = `0% ${(progress * 80).toFixed(1)}%`
+      gradientBg.style.opacity             = Math.min(1, progress * 2).toFixed(3)
+      gradientBg.style.backgroundPosition  = `0% ${(progress * 80).toFixed(1)}%`
     } else {
       gradientBg.classList.remove('active')
-      gradientBg.style.opacity           = '0'
-      gradientBg.style.backgroundPosition = '0% 0%'
+      gradientBg.style.opacity             = '0'
+      gradientBg.style.backgroundPosition  = '0% 0%'
     }
     gradientBg.style.setProperty('--grad-progress', progress.toFixed(3))
   }
 
-  // Pixel overlay — skip repaint if progress barely changed
   pixelCanvas.style.opacity = (progress * 0.75).toFixed(3)
   if (Math.abs(progress - lastProgress) >= 0.008) {
     lastProgress = progress
@@ -141,22 +126,22 @@ function onScroll() {
 
 window.addEventListener('scroll', onScroll, { passive: true })
 window.addEventListener('resize', onScroll)
-onScroll() 
+onScroll()
 
 // ==============================
 // REVEAL & NAV ACTIVE
 // ==============================
-const obs = new IntersectionObserver(entries => entries.forEach(e => { 
-    if(e.isIntersecting) e.target.classList.add('active'); 
+const obs = new IntersectionObserver(entries => entries.forEach(e => {
+    if(e.isIntersecting) e.target.classList.add('active');
 }), { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
 const secs = document.querySelectorAll('section[id]');
 const navAnchors = document.querySelectorAll('.nav-links a');
 const secObs = new IntersectionObserver(entries => entries.forEach(e => {
-    if(e.isIntersecting) { 
-        const id = e.target.id; 
-        navAnchors.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id)); 
+    if(e.isIntersecting) {
+        const id = e.target.id;
+        navAnchors.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
     }
 }), { threshold: 0.3 });
 secs.forEach(s => secObs.observe(s));
@@ -317,8 +302,6 @@ const workCards = [
       0%,100% { opacity: 0.7; transform: scale(1); }
       50%      { opacity: 1;   transform: scale(1.03); }
     }
-
-    /* nav & dots */
     .work-nav { display:flex; justify-content:center; gap:20px; margin-top:30px; }
     .work-btn {
       width:48px; height:48px; border-radius:50%;
@@ -341,8 +324,6 @@ const workCards = [
     }
     .work-dot.active { background:var(--orange); transform:scale(1.4); border-color:rgba(254,94,50,0.35); }
     .work-dot.gone   { opacity:0; pointer-events:none; }
-
-    /* modal */
     .work-modal {
       position:fixed; inset:0;
       background:rgba(0,0,0,0.88);
@@ -386,16 +367,15 @@ const workCards = [
 // ==============================
 class WorkCardStack {
   constructor(sceneEl, works) {
-    this.sceneEl = sceneEl
-    this.works = works
-    this.cards = []
-    this.gone = new Set()
+    this.sceneEl   = sceneEl
+    this.works     = works
+    this.cards     = []
+    this.gone      = new Set()
     this.currentIndex = 0
-    this.isDragging = false
+    this.isDragging   = false
     this.init()
   }
 
-  // 3D transform matching React Spring demo feel
   trans(rot, scale) {
     return `perspective(1500px) rotateX(4deg) rotateY(${rot / 10}deg) rotateZ(${rot}deg) scale(${scale})`
   }
@@ -406,7 +386,7 @@ class WorkCardStack {
         <span class="work-card-num">${String(index + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}</span>
         ${index === 0 ? '<span class="work-hint">Click to enlarge · Drag to dismiss</span>' : ''}
         <span class="work-card-tag" style="color:${work.accent};">${work.tag}</span>
-        <h3 class="work-card-title" style="color:#fff;">${work.title}</h3>
+        <h3 class="work-card-title">${work.title}</h3>
         <p class="work-card-desc">${work.desc}</p>
       </div>
     `
@@ -415,30 +395,35 @@ class WorkCardStack {
   init() {
     this.works.forEach((work, index) => {
       const card = document.createElement('div')
-      card.className = 'work-card'
+      card.className  = 'work-card'
       card.style.zIndex = this.works.length - index
 
-      const yOff = index * -5
-      const rot = -8 + Math.random() * 16
+      const yOff  = index * -5
+      const rot   = -8 + Math.random() * 16
       card.innerHTML = this.buildCardHTML(work, index, this.works.length)
 
       const inner = card.querySelector('.work-card-inner')
       inner.style.transform = this.trans(rot, 1 - index * 0.02)
       inner.style.marginTop = yOff + 'px'
-      inner._baseRot = rot
+      inner._baseRot   = rot
       inner._baseScale = 1 - index * 0.02
-      inner._baseY = yOff
+      inner._baseY     = yOff
 
       this.sceneEl.appendChild(card)
       this.cards.push(card)
 
+      // Click to enlarge — on the card element, not inner,
+      // so gone cards (pointer-events:none) won't intercept
       card.addEventListener('click', e => {
         if (this.isDragging) return
+        if (index !== this.currentIndex) return   // only respond when this is the top card
         e.stopPropagation()
         this.enlargeCard(work)
       })
 
-      if (index === 0) this.setupDrag(card, index)
+      // FIX: setupDrag called for ALL cards, not just index 0
+      // Each handler checks this.currentIndex before acting
+      this.setupDrag(card, index)
     })
 
     this.createNav()
@@ -448,32 +433,36 @@ class WorkCardStack {
   setupDrag(card, index) {
     const inner = card.querySelector('.work-card-inner')
     let startX = 0, currentX = 0, velX = 0, lastX = 0, lastT = 0
+    let dragging = false
     const THRESHOLD = 80
 
-    inner.addEventListener('mousedown', e => {
+    const onMouseDown = e => {
       if (index !== this.currentIndex || this.gone.has(index)) return
-      this.isDragging = false          // reset; set true on first move
-      startX = e.clientX
-      lastX = startX; lastT = Date.now()
+      dragging   = false
+      startX     = e.clientX
+      lastX      = startX
+      lastT      = Date.now()
       inner.style.transition = 'none'
-      inner.style.cursor = 'grabbing'
-    })
+      inner.style.cursor     = 'grabbing'
+    }
 
-    document.addEventListener('mousemove', e => {
+    const onMouseMove = e => {
       if (inner.style.cursor !== 'grabbing' || index !== this.currentIndex) return
+      dragging   = true
       this.isDragging = true
-      currentX = e.clientX - startX
-      const now = Date.now(), dt = now - lastT
+      currentX   = e.clientX - startX
+      const now  = Date.now(), dt = now - lastT
       if (dt > 0) velX = (e.clientX - lastX) / dt * 16
       lastX = e.clientX; lastT = now
       inner.style.transform = this.trans(currentX / 8, 1.06)
       inner.style.marginTop = inner._baseY + 'px'
-    })
+    }
 
-    document.addEventListener('mouseup', () => {
+    const onMouseUp = () => {
       if (inner.style.cursor !== 'grabbing' || index !== this.currentIndex) return
       inner.style.cursor = 'grab'
-      const wasDragging = this.isDragging
+      const wasDragging  = dragging
+      dragging = false
       setTimeout(() => { this.isDragging = false }, 50)
 
       if (wasDragging && (Math.abs(velX) > 20 || Math.abs(currentX) > THRESHOLD)) {
@@ -482,17 +471,24 @@ class WorkCardStack {
         this.snapBack(inner)
       }
       currentX = 0; velX = 0
-    })
+    }
 
-    // Touch support
+    inner.addEventListener('mousedown', onMouseDown)
+    document.addEventListener('mousemove', onMouseMove)
+    document.addEventListener('mouseup',   onMouseUp)
+
+    // Touch
     inner.addEventListener('touchstart', e => {
-      startX = e.touches[0].clientX
-      lastX = startX; lastT = Date.now()
+      if (index !== this.currentIndex || this.gone.has(index)) return
+      dragging = false
+      startX   = e.touches[0].clientX
+      lastX    = startX; lastT = Date.now()
       inner.style.transition = 'none'
     }, { passive: true })
 
     inner.addEventListener('touchmove', e => {
       if (index !== this.currentIndex) return
+      dragging        = true
       this.isDragging = true
       currentX = e.touches[0].clientX - startX
       const now = Date.now(), dt = now - lastT
@@ -502,7 +498,9 @@ class WorkCardStack {
     }, { passive: true })
 
     inner.addEventListener('touchend', () => {
-      const wasDragging = this.isDragging
+      if (index !== this.currentIndex) return
+      const wasDragging = dragging
+      dragging = false
       setTimeout(() => { this.isDragging = false }, 50)
       if (wasDragging && (Math.abs(velX) > 20 || Math.abs(currentX) > THRESHOLD)) {
         this.flyAway(card, index, currentX)
@@ -515,10 +513,14 @@ class WorkCardStack {
 
   flyAway(card, index, direction) {
     const inner = card.querySelector('.work-card-inner')
-    const dir = direction < 0 ? -1 : 1
+    const dir   = direction < 0 ? -1 : 1
     inner.style.transition = 'transform 0.4s ease, opacity 0.4s ease'
-    inner.style.transform = `perspective(1500px) rotateX(4deg) rotateY(${dir * 25}deg) rotateZ(${dir * 20}deg) translateX(${dir * 120}%) scale(0.9)`
-    inner.style.opacity = '0'
+    inner.style.transform  = `perspective(1500px) rotateX(4deg) rotateY(${dir * 25}deg) rotateZ(${dir * 20}deg) translateX(${dir * 120}%) scale(0.9)`
+    inner.style.opacity    = '0'
+
+    // FIX: disable pointer events on gone cards so they don't intercept clicks on cards below
+    setTimeout(() => { card.style.pointerEvents = 'none' }, 400)
+
     this.gone.add(index)
     this.currentIndex = this.nextActive()
     this.updateDots()
@@ -530,8 +532,8 @@ class WorkCardStack {
 
   snapBack(inner) {
     inner.style.transition = 'transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease'
-    inner.style.transform = this.trans(inner._baseRot, inner._baseScale)
-    inner.style.opacity = '1'
+    inner.style.transform  = this.trans(inner._baseRot, inner._baseScale)
+    inner.style.opacity    = '1'
   }
 
   nextActive() {
@@ -588,6 +590,8 @@ class WorkCardStack {
     if (!gone.length) return
     const last = gone[0]
     this.gone.delete(last)
+    // FIX: restore pointer events when bringing a card back
+    this.cards[last].style.pointerEvents = ''
     this.snapBack(this.cards[last].querySelector('.work-card-inner'))
     this.currentIndex = last
     this.updateDots()
@@ -596,10 +600,12 @@ class WorkCardStack {
   resetAll() {
     this.cards.forEach((card, i) => {
       const inner = card.querySelector('.work-card-inner')
-      inner.style.transition = 'transform 0.45s ease, opacity 0.3s ease'
-      inner.style.opacity = '1'
-      inner.style.transform = this.trans(inner._baseRot, inner._baseScale)
-      inner.style.marginTop = inner._baseY + 'px'
+      // FIX: restore pointer events on full reset
+      card.style.pointerEvents = ''
+      inner.style.transition   = 'transform 0.45s ease, opacity 0.3s ease'
+      inner.style.opacity      = '1'
+      inner.style.transform    = this.trans(inner._baseRot, inner._baseScale)
+      inner.style.marginTop    = inner._baseY + 'px'
     })
     this.updateDots()
   }
