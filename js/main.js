@@ -163,6 +163,14 @@ const workCards = [
     tag: 'Branding',
     bg: '#1a1a2e',
     accent: '#e94560',
+    gallery: [
+      'https://picsum.photos/seed/brand1/700/900',
+      'https://picsum.photos/seed/brand2/700/900',
+      'https://picsum.photos/seed/brand3/700/900',
+      'https://picsum.photos/seed/brand4/700/900',
+      'https://picsum.photos/seed/brand5/700/900',
+      'https://picsum.photos/seed/brand6/700/900',
+    ],
   },
   {
     title: 'Editorial Layout',
@@ -170,6 +178,14 @@ const workCards = [
     tag: 'Print',
     bg: '#2d4a3e',
     accent: '#88d498',
+    gallery: [
+      'https://picsum.photos/seed/edit1/700/900',
+      'https://picsum.photos/seed/edit2/700/900',
+      'https://picsum.photos/seed/edit3/700/900',
+      'https://picsum.photos/seed/edit4/700/900',
+      'https://picsum.photos/seed/edit5/700/900',
+      'https://picsum.photos/seed/edit6/700/900',
+    ],
   },
   {
     title: 'Motion Graphics',
@@ -177,6 +193,14 @@ const workCards = [
     tag: 'Motion',
     bg: '#2c1654',
     accent: '#c77dff',
+    gallery: [
+      'https://picsum.photos/seed/mot1/700/900',
+      'https://picsum.photos/seed/mot2/700/900',
+      'https://picsum.photos/seed/mot3/700/900',
+      'https://picsum.photos/seed/mot4/700/900',
+      'https://picsum.photos/seed/mot5/700/900',
+      'https://picsum.photos/seed/mot6/700/900',
+    ],
   },
   {
     title: 'Web Design',
@@ -184,6 +208,14 @@ const workCards = [
     tag: 'Digital',
     bg: '#1b2838',
     accent: '#66c0f4',
+    gallery: [
+      'https://picsum.photos/seed/web1/700/900',
+      'https://picsum.photos/seed/web2/700/900',
+      'https://picsum.photos/seed/web3/700/900',
+      'https://picsum.photos/seed/web4/700/900',
+      'https://picsum.photos/seed/web5/700/900',
+      'https://picsum.photos/seed/web6/700/900',
+    ],
   },
   {
     title: 'Packaging',
@@ -191,6 +223,14 @@ const workCards = [
     tag: 'Packaging',
     bg: '#3d2b1f',
     accent: '#f4a261',
+    gallery: [
+      'https://picsum.photos/seed/pack1/700/900',
+      'https://picsum.photos/seed/pack2/700/900',
+      'https://picsum.photos/seed/pack3/700/900',
+      'https://picsum.photos/seed/pack4/700/900',
+      'https://picsum.photos/seed/pack5/700/900',
+      'https://picsum.photos/seed/pack6/700/900',
+    ],
   },
   {
     title: 'Photography',
@@ -198,6 +238,14 @@ const workCards = [
     tag: 'Photo',
     bg: '#1c1c1c',
     accent: '#e0e0e0',
+    gallery: [
+      'https://picsum.photos/seed/photo1/700/900',
+      'https://picsum.photos/seed/photo2/700/900',
+      'https://picsum.photos/seed/photo3/700/900',
+      'https://picsum.photos/seed/photo4/700/900',
+      'https://picsum.photos/seed/photo5/700/900',
+      'https://picsum.photos/seed/photo6/700/900',
+    ],
   },
 ]
 
@@ -358,6 +406,120 @@ const workCards = [
     .work-modal-close:hover { transform:scale(1.12); background:var(--orange); color:#fff; }
     @keyframes wFadeIn { from{opacity:0} to{opacity:1} }
     @keyframes wZoomIn { from{transform:scale(0.9);opacity:0} to{transform:scale(1);opacity:1} }
+
+    /* ---- title button on card ---- */
+    .work-card-title-btn {
+      background: none; border: none; padding: 0; margin: 0 0 10px;
+      cursor: pointer; text-align: left; width: 100%;
+      font-family: var(--font-headers);
+      font-size: 1.5rem; font-weight: 800; color: #fff;
+      line-height: 1.2; letter-spacing: -0.3px;
+      position: relative; display: inline-block;
+      transition: opacity 0.2s ease;
+    }
+    .work-card-title-btn::after {
+      content: '';
+      position: absolute; bottom: -3px; left: 0;
+      width: 0; height: 2px; background: currentColor;
+      transition: width 0.3s ease;
+    }
+    .work-card-title-btn:hover { opacity: 0.85; }
+    .work-card-title-btn:hover::after { width: 100%; }
+    .work-card-title-btn .btn-hint {
+      font-family: var(--font-headers); font-size: 0.55rem;
+      font-weight: 600; text-transform: uppercase; letter-spacing: 2px;
+      opacity: 0.5; display: block; margin-top: 5px;
+    }
+
+    /* ---- gallery overlay ---- */
+    .work-gallery-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.96);
+      z-index: 10001;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      animation: wFadeIn 0.25s ease;
+    }
+    .work-gallery-header {
+      position: absolute; top: 0; left: 0; right: 0;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 24px 32px;
+    }
+    .work-gallery-title {
+      font-family: var(--font-headers); font-size: 0.75rem;
+      font-weight: 700; text-transform: uppercase; letter-spacing: 3px;
+      color: rgba(255,255,255,0.5);
+    }
+    .work-gallery-close {
+      background: rgba(255,255,255,0.1); border: none;
+      width: 40px; height: 40px; border-radius: 50%;
+      color: #fff; font-size: 20px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s ease;
+    }
+    .work-gallery-close:hover { background: var(--orange); }
+    .work-gallery-stage {
+      position: relative;
+      width: min(420px, 88vw);
+      height: min(580px, 75vh);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .work-gallery-img {
+      width: 100%; height: 100%;
+      object-fit: cover; border-radius: 14px;
+      box-shadow: 0 30px 90px rgba(0,0,0,0.6);
+      display: block; opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .work-gallery-img.loaded { opacity: 1; }
+    .work-gallery-spinner {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .work-gallery-spinner::after {
+      content: '';
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 3px solid rgba(255,255,255,0.15);
+      border-top-color: var(--orange);
+      animation: gallerySpin 0.7s linear infinite;
+    }
+    @keyframes gallerySpin { to { transform: rotate(360deg); } }
+    .work-gallery-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: rgba(255,255,255,0.1); border: none;
+      width: 48px; height: 48px; border-radius: 50%;
+      color: #fff; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s ease, transform 0.2s ease; z-index: 2;
+    }
+    .work-gallery-arrow:hover { background: var(--orange); transform: translateY(-50%) scale(1.1); }
+    .work-gallery-arrow svg { width: 20px; height: 20px; stroke: #fff; stroke-width: 2.5; fill: none; }
+    .work-gallery-arrow.prev { left: -64px; }
+    .work-gallery-arrow.next { right: -64px; }
+    @media (max-width: 640px) {
+      .work-gallery-arrow.prev { left: 8px; }
+      .work-gallery-arrow.next { right: 8px; }
+    }
+    .work-gallery-footer {
+      margin-top: 28px;
+      display: flex; flex-direction: column; align-items: center; gap: 14px;
+    }
+    .work-gallery-counter {
+      font-family: var(--font-headers); font-size: 0.7rem;
+      font-weight: 600; letter-spacing: 3px; color: rgba(255,255,255,0.4);
+    }
+    .work-gallery-dots { display: flex; gap: 8px; }
+    .work-gallery-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      transition: all 0.25s ease; cursor: pointer;
+    }
+    .work-gallery-dot.active { background: #fff; transform: scale(1.5); }
+    .work-gallery-esc-hint {
+      font-family: var(--font-headers); font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 2px;
+      color: rgba(255,255,255,0.2); margin-top: 2px;
+    }
   `
   document.head.appendChild(style)
 })()
@@ -384,9 +546,12 @@ class WorkCardStack {
     return `
       <div class="work-card-inner" style="background:${work.bg};">
         <span class="work-card-num">${String(index + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}</span>
-        ${index === 0 ? '<span class="work-hint">Click to enlarge · Drag to dismiss</span>' : ''}
+        ${index === 0 ? '<span class="work-hint">Drag to dismiss · Click title to view work</span>' : ''}
         <span class="work-card-tag" style="color:${work.accent};">${work.tag}</span>
-        <h3 class="work-card-title">${work.title}</h3>
+        <button class="work-card-title-btn" data-gallery="true">
+          ${work.title}
+          <span class="btn-hint">↗ View project</span>
+        </button>
         <p class="work-card-desc">${work.desc}</p>
       </div>
     `
@@ -412,11 +577,22 @@ class WorkCardStack {
       this.sceneEl.appendChild(card)
       this.cards.push(card)
 
-      // Click to enlarge — on the card element, not inner,
-      // so gone cards (pointer-events:none) won't intercept
+      // Title button → open picture gallery (stopPropagation prevents card-level enlarge)
+      const titleBtn = card.querySelector('.work-card-title-btn')
+      if (titleBtn) {
+        titleBtn.addEventListener('click', e => {
+          e.stopPropagation()
+          if (this.isDragging) return
+          if (index !== this.currentIndex) return
+          this.showGallery(work)
+        })
+      }
+
+      // Card click (anywhere except title btn) → enlarge card modal
       card.addEventListener('click', e => {
         if (this.isDragging) return
-        if (index !== this.currentIndex) return   // only respond when this is the top card
+        if (index !== this.currentIndex) return
+        if (e.target.closest('.work-card-title-btn')) return  // handled above
         e.stopPropagation()
         this.enlargeCard(work)
       })
@@ -608,6 +784,86 @@ class WorkCardStack {
       inner.style.marginTop    = inner._baseY + 'px'
     })
     this.updateDots()
+  }
+
+  showGallery(work) {
+    if (document.querySelector('.work-gallery-overlay')) return
+    const images = work.gallery || []
+    if (!images.length) return
+
+    let current = 0
+
+    const overlay = document.createElement('div')
+    overlay.className = 'work-gallery-overlay'
+    overlay.innerHTML = `
+      <div class="work-gallery-header">
+        <span class="work-gallery-title">${work.tag} — ${work.title}</span>
+        <button class="work-gallery-close" aria-label="Close gallery">✕</button>
+      </div>
+      <div class="work-gallery-stage">
+        <div class="work-gallery-spinner"></div>
+        <img class="work-gallery-img" alt="Project image" />
+        <button class="work-gallery-arrow prev" aria-label="Previous">
+          <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button class="work-gallery-arrow next" aria-label="Next">
+          <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+      <div class="work-gallery-footer">
+        <span class="work-gallery-counter">1 / ${images.length}</span>
+        <div class="work-gallery-dots">
+          ${images.map((_, i) => `<span class="work-gallery-dot${i === 0 ? ' active' : ''}"></span>`).join('')}
+        </div>
+        <span class="work-gallery-esc-hint">ESC to close</span>
+      </div>
+    `
+    document.body.appendChild(overlay)
+
+    const img      = overlay.querySelector('.work-gallery-img')
+    const spinner  = overlay.querySelector('.work-gallery-spinner')
+    const counter  = overlay.querySelector('.work-gallery-counter')
+    const dots     = overlay.querySelectorAll('.work-gallery-dot')
+    const prevBtn  = overlay.querySelector('.prev')
+    const nextBtn  = overlay.querySelector('.next')
+
+    const goTo = (n) => {
+      current = (n + images.length) % images.length
+      img.classList.remove('loaded')
+      spinner.style.display = 'flex'
+      const src = images[current]
+      const tmp = new Image()
+      tmp.onload = () => {
+        img.src = src
+        img.classList.add('loaded')
+        spinner.style.display = 'none'
+      }
+      tmp.onerror = () => { spinner.style.display = 'none' }
+      tmp.src = src
+      counter.textContent = `${current + 1} / ${images.length}`
+      dots.forEach((d, i) => d.classList.toggle('active', i === current))
+    }
+
+    const close = () => {
+      overlay.style.opacity = '0'
+      overlay.style.transition = 'opacity 0.2s ease'
+      setTimeout(() => overlay.remove(), 200)
+      document.removeEventListener('keydown', onKey)
+    }
+
+    const onKey = e => {
+      if (e.key === 'Escape')     close()
+      if (e.key === 'ArrowRight') goTo(current + 1)
+      if (e.key === 'ArrowLeft')  goTo(current - 1)
+    }
+
+    prevBtn.onclick = () => goTo(current - 1)
+    nextBtn.onclick = () => goTo(current + 1)
+    overlay.querySelector('.work-gallery-close').onclick = close
+    dots.forEach((d, i) => { d.onclick = () => goTo(i) })
+    document.addEventListener('keydown', onKey)
+
+    goTo(0) // load first image
   }
 
   enlargeCard(work) {
